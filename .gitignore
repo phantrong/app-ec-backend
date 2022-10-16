@@ -19,6 +19,5 @@ docker-compose.yml
 nginx.conf
 redis.conf
 /docker/mongo*
-composer.lock
 package-lock.json
 phpcs.xml
