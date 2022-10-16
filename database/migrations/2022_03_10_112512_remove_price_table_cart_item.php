@@ -30,9 +30,6 @@ return new class extends Migration
         Schema::table('dtb_product_classes', function (Blueprint $table) {
             $table->decimal('discount', 12, 2)->after('price');
         });
-
-        ProductClass::join('dtb_product_classes', 'dtb_product_classes.id', '=', 'dtb_product_classes.id')
-            ->update(['dtb_product_classes.discount' => DB::raw("dtb_product_classes.price")]);
     }
 
     /**
