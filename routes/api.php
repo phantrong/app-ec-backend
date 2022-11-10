@@ -23,6 +23,7 @@ use App\Http\Controllers\ManagerMessageLivestreamController;
 use App\Http\Controllers\SettingAccountStaffController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\UploadController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,6 +38,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/server-status', function () {
+    return response()->json(DB::table('dtb_admins')->get());
     return response()->json([
         'success' => true,
         'message' => 'server running',
