@@ -9,6 +9,7 @@ use App\Services\CategoryService;
 use App\Services\UploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class CategoryController extends BaseController
 {
@@ -76,7 +77,7 @@ class CategoryController extends BaseController
         try {
             $image = $this->uploadService->uploadFileStorage($request->image);
             $data = $request->only('name', 'status');
-            $data['image_path'] = $image[0];
+            $data['image_path'] = URL::to('/') . '/' . $image;
             $this->categoryService->createCategory($data);
             return $this->sendResponse();
         } catch (\Exception $e) {
@@ -99,8 +100,8 @@ class CategoryController extends BaseController
         try {
             $data = $request->only('name', 'status');
             if ($request->image) {
-                $image = $this->uploadService->uploadFile($request->image, EnumFile::IMAGE_CATEGORY, 'categories');
-                $data['image_path'] = $image[0];
+                $image = $this->uploadService->uploadFileStorage($request->image);
+                $data['image_path'] = URL::to('/') . '/' . $image;
             }
             $this->categoryService->updateCategory($categoryId, $data);
             return $this->sendResponse();
