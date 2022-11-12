@@ -26,10 +26,11 @@ class CategoryRequest extends FormRequest
      */
     public function rules()
     {
+        $id = $this->id ? $this->id : 'null';
         $rules = [
             'image' => 'required|mimes:' . config('filesystems.image_extension') .
                 "|max:" . config('filesystems.avatar_size'),
-            'name' => 'required|max:20|unique:mtb_categories,name,' . $this->id . ',id,deleted_at,NULL',
+            'name' => 'required|max:20|unique:mtb_categories,name,' . $id . ',id,deleted_at,NULL',
             'status' => 'required'
         ];
         if ($this->id) {
