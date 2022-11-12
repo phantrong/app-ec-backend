@@ -40,10 +40,10 @@ class UploadService
                 $extension = 'jpg';
             }
 
-            $exif = @exif_read_data($file);
-            if (!empty($exif['Orientation'])) {
-                $file = $this->rotateFileImage($exif, $file, $extension);
-            }
+            // $exif = @exif_read_data($file);
+            // if (!empty($exif['Orientation'])) {
+            //     $file = $this->rotateFileImage($exif, $file, $extension);
+            // }
 
             if (in_array($folder, $folderNotResize)) {
                 $fileImg = Image::make($file);
