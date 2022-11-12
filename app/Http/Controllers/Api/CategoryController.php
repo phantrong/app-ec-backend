@@ -74,7 +74,7 @@ class CategoryController extends BaseController
     public function createCategory(CategoryRequest $request)
     {
         try {
-            $image = $this->uploadService->uploadFile($request->image, EnumFile::IMAGE_CATEGORY, 'categories');
+            $image = $this->uploadService->uploadFileStorage($request->image);
             $data = $request->only('name', 'status');
             $data['image_path'] = $image[0];
             $this->categoryService->createCategory($data);
