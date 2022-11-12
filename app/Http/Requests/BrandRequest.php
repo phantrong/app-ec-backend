@@ -28,9 +28,10 @@ class BrandRequest extends FormRequest
     public function rules()
     {
         $status = [EnumBrand::STATUS_PRIVATE, EnumBrand::STATUS_PUBLIC];
+        $id = $this->id ? $this->id : 'null';
         return [
             'name' => 'required|max:20|unique:mtb_brands,name,' .
-                $this->id . ',id,category_id,' . $this->category_id.',deleted_at,NULL',
+                $id . ',id,category_id,' . $this->category_id.',deleted_at,NULL',
             'status' => 'required|in:' . implode(',', $status),
             'category_id' => 'required|exists:mtb_categories,id,deleted_at,NULL'
         ];
