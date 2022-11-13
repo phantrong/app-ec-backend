@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2f91b2f93d1ee169d6480801ebc667b2",
+    "content-hash": "ceaff2e3c74dfd9d4a1f5c51635898ee",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1808,6 +1808,73 @@
                 "source": "https://github.com/ezyang/htmlpurifier/tree/v4.14.0"
             },
             "time": "2021-12-25T01:21:49+00:00"
+        },
+        {
+            "name": "fakerphp/faker",
+            "version": "v1.19.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FakerPHP/Faker.git",
+                "reference": "d7f08a622b3346766325488aa32ddc93ccdecc75"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/d7f08a622b3346766325488aa32ddc93ccdecc75",
+                "reference": "d7f08a622b3346766325488aa32ddc93ccdecc75",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0",
+                "psr/container": "^1.0 || ^2.0",
+                "symfony/deprecation-contracts": "^2.2 || ^3.0"
+            },
+            "conflict": {
+                "fzaninotto/faker": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.4.1",
+                "doctrine/persistence": "^1.3 || ^2.0",
+                "ext-intl": "*",
+                "symfony/phpunit-bridge": "^4.4 || ^5.2"
+            },
+            "suggest": {
+                "doctrine/orm": "Required to use Faker\\ORM\\Doctrine",
+                "ext-curl": "Required by Faker\\Provider\\Image to download images.",
+                "ext-dom": "Required by Faker\\Provider\\HtmlLorem for generating random HTML.",
+                "ext-iconv": "Required by Faker\\Provider\\ru_RU\\Text::realText() for generating real Russian text.",
+                "ext-mbstring": "Required for multibyte Unicode string functionality."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "v1.19-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "support": {
+                "issues": "https://github.com/FakerPHP/Faker/issues",
+                "source": "https://github.com/FakerPHP/Faker/tree/v1.19.0"
+            },
+            "time": "2022-02-02T17:38:57+00:00"
         },
         {
             "name": "fruitcake/laravel-cors",
@@ -4577,72 +4644,6 @@
             "time": "2021-12-04T23:24:31+00:00"
         },
         {
-            "name": "predis/predis",
-            "version": "v1.1.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/predis/predis.git",
-                "reference": "a2fb02d738bedadcffdbb07efa3a5e7bd57f8d6e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/predis/predis/zipball/a2fb02d738bedadcffdbb07efa3a5e7bd57f8d6e",
-                "reference": "a2fb02d738bedadcffdbb07efa3a5e7bd57f8d6e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.9"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.8"
-            },
-            "suggest": {
-                "ext-curl": "Allows access to Webdis when paired with phpiredis",
-                "ext-phpiredis": "Allows faster serialization and deserialization of the Redis protocol"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Predis\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Daniele Alessandri",
-                    "email": "suppakilla@gmail.com",
-                    "homepage": "http://clorophilla.net",
-                    "role": "Creator & Maintainer"
-                },
-                {
-                    "name": "Till Krüss",
-                    "homepage": "https://till.im",
-                    "role": "Maintainer"
-                }
-            ],
-            "description": "Flexible and feature-complete Redis client for PHP and HHVM",
-            "homepage": "http://github.com/predis/predis",
-            "keywords": [
-                "nosql",
-                "predis",
-                "redis"
-            ],
-            "support": {
-                "issues": "https://github.com/predis/predis/issues",
-                "source": "https://github.com/predis/predis/tree/v1.1.10"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/sponsors/tillkruss",
-                    "type": "github"
-                }
-            ],
-            "time": "2022-01-05T17:46:08+00:00"
-        },
-        {
             "name": "psr/cache",
             "version": "3.0.0",
             "source": {
@@ -5650,261 +5651,6 @@
                 "source": "https://github.com/Seldaek/phar-utils/tree/1.2.0"
             },
             "time": "2021-12-10T11:20:11+00:00"
-        },
-        {
-            "name": "spatie/laravel-package-tools",
-            "version": "1.11.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-package-tools.git",
-                "reference": "baeb3df0ebb3a541394fdaf8cbe6115bf4034a59"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/baeb3df0ebb3a541394fdaf8cbe6115bf4034a59",
-                "reference": "baeb3df0ebb3a541394fdaf8cbe6115bf4034a59",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "^7.0|^8.0|^9.0",
-                "php": "^7.4|^8.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.4",
-                "orchestra/testbench": "^5.0|^6.23|^7.0",
-                "phpunit/phpunit": "^9.4",
-                "spatie/test-time": "^1.2"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\LaravelPackageTools\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Tools for creating Laravel packages",
-            "homepage": "https://github.com/spatie/laravel-package-tools",
-            "keywords": [
-                "laravel-package-tools",
-                "spatie"
-            ],
-            "support": {
-                "issues": "https://github.com/spatie/laravel-package-tools/issues",
-                "source": "https://github.com/spatie/laravel-package-tools/tree/1.11.3"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/spatie",
-                    "type": "github"
-                }
-            ],
-            "time": "2022-03-15T20:01:36+00:00"
-        },
-        {
-            "name": "spatie/laravel-stripe-webhooks",
-            "version": "3.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-stripe-webhooks.git",
-                "reference": "a496eacbf74733a848c8ee6043aa07c73595010e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-stripe-webhooks/zipball/a496eacbf74733a848c8ee6043aa07c73595010e",
-                "reference": "a496eacbf74733a848c8ee6043aa07c73595010e",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^8.0|^9.0",
-                "php": "^8.0",
-                "spatie/laravel-webhook-client": "^3.0",
-                "stripe/stripe-php": "^7.51|^8.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^6.0|^7.0",
-                "phpunit/phpunit": "^9.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Spatie\\StripeWebhooks\\StripeWebhooksServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\StripeWebhooks\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Handle stripe webhooks in a Laravel application",
-            "homepage": "https://github.com/spatie/laravel-stripe-webhooks",
-            "keywords": [
-                "laravel-stripe-webhooks",
-                "spatie"
-            ],
-            "support": {
-                "issues": "https://github.com/spatie/laravel-stripe-webhooks/issues",
-                "source": "https://github.com/spatie/laravel-stripe-webhooks/tree/3.1.3"
-            },
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                }
-            ],
-            "time": "2022-05-18T15:50:17+00:00"
-        },
-        {
-            "name": "spatie/laravel-webhook-client",
-            "version": "3.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/spatie/laravel-webhook-client.git",
-                "reference": "59ff7228c9a71ab25b5dd20f249dc722f6bf8bce"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-webhook-client/zipball/59ff7228c9a71ab25b5dd20f249dc722f6bf8bce",
-                "reference": "59ff7228c9a71ab25b5dd20f249dc722f6bf8bce",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/bus": "^8.50|^9.0",
-                "illuminate/database": "^8.50|^9.0",
-                "illuminate/support": "^8.50|^9.0",
-                "php": "^8.0",
-                "spatie/laravel-package-tools": "^1.11"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^6.0|^7.0",
-                "phpunit/phpunit": "^9.3",
-                "spatie/laravel-ray": "^1.24"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Spatie\\WebhookClient\\WebhookClientServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Spatie\\WebhookClient\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Freek Van der Herten",
-                    "email": "freek@spatie.be",
-                    "homepage": "https://spatie.be",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Receive webhooks in Laravel apps",
-            "homepage": "https://github.com/spatie/laravel-webhook-client",
-            "keywords": [
-                "laravel-webhook-client",
-                "spatie"
-            ],
-            "support": {
-                "issues": "https://github.com/spatie/laravel-webhook-client/issues",
-                "source": "https://github.com/spatie/laravel-webhook-client/tree/3.1.2"
-            },
-            "funding": [
-                {
-                    "url": "https://spatie.be/open-source/support-us",
-                    "type": "custom"
-                }
-            ],
-            "time": "2022-04-07T22:44:43+00:00"
-        },
-        {
-            "name": "stripe/stripe-php",
-            "version": "v7.128.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "c704949c49b72985c76cc61063aa26fefbd2724e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/c704949c49b72985c76cc61063aa26fefbd2724e",
-                "reference": "c704949c49b72985c76cc61063aa26fefbd2724e",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "3.5.0",
-                "phpstan/phpstan": "^1.2",
-                "phpunit/phpunit": "^5.7 || ^9.0",
-                "squizlabs/php_codesniffer": "^3.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Stripe\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Stripe and contributors",
-                    "homepage": "https://github.com/stripe/stripe-php/contributors"
-                }
-            ],
-            "description": "Stripe PHP Library",
-            "homepage": "https://stripe.com/",
-            "keywords": [
-                "api",
-                "payment processing",
-                "stripe"
-            ],
-            "support": {
-                "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.128.0"
-            },
-            "time": "2022-05-05T17:18:02+00:00"
         },
         {
             "name": "symfony/console",
@@ -8528,73 +8274,6 @@
             "time": "2020-10-16T08:27:54+00:00"
         },
         {
-            "name": "fakerphp/faker",
-            "version": "v1.19.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/FakerPHP/Faker.git",
-                "reference": "d7f08a622b3346766325488aa32ddc93ccdecc75"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/d7f08a622b3346766325488aa32ddc93ccdecc75",
-                "reference": "d7f08a622b3346766325488aa32ddc93ccdecc75",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1 || ^8.0",
-                "psr/container": "^1.0 || ^2.0",
-                "symfony/deprecation-contracts": "^2.2 || ^3.0"
-            },
-            "conflict": {
-                "fzaninotto/faker": "*"
-            },
-            "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.4.1",
-                "doctrine/persistence": "^1.3 || ^2.0",
-                "ext-intl": "*",
-                "symfony/phpunit-bridge": "^4.4 || ^5.2"
-            },
-            "suggest": {
-                "doctrine/orm": "Required to use Faker\\ORM\\Doctrine",
-                "ext-curl": "Required by Faker\\Provider\\Image to download images.",
-                "ext-dom": "Required by Faker\\Provider\\HtmlLorem for generating random HTML.",
-                "ext-iconv": "Required by Faker\\Provider\\ru_RU\\Text::realText() for generating real Russian text.",
-                "ext-mbstring": "Required for multibyte Unicode string functionality."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "v1.19-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Faker\\": "src/Faker/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "François Zaninotto"
-                }
-            ],
-            "description": "Faker is a PHP library that generates fake data for you.",
-            "keywords": [
-                "data",
-                "faker",
-                "fixtures"
-            ],
-            "support": {
-                "issues": "https://github.com/FakerPHP/Faker/issues",
-                "source": "https://github.com/FakerPHP/Faker/tree/v1.19.0"
-            },
-            "time": "2022-02-02T17:38:57+00:00"
-        },
-        {
             "name": "filp/whoops",
             "version": "2.14.5",
             "source": {
@@ -11063,5 +10742,5 @@
         "php": "^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.0.0"
 }

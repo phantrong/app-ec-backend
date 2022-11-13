@@ -29,7 +29,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Predis\Client;
 use Throwable;
 use Illuminate\Support\Str;
 
