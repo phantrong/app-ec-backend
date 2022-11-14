@@ -88,7 +88,7 @@ class UploadService
 
     public function uploadFileStorage($file)
     {
-        $fileName = $file->getClientOriginalName();
+        $fileName = time().'.'.$file->extension();
         if (!Storage::exists('public/')) {
             Storage::makeDirectory('public'); //creates directory
             @chmod('public/', 0755);
@@ -97,7 +97,7 @@ class UploadService
             Storage::makeDirectory('public/images'); //creates directory
             @chmod('public/images/', 0755);
         }
-        return $file->storeAs(config('filesystems.folder_image_stripe'), $fileName, 'local');
+        return $file->storeAs('uploads', $fileName);
     }
 
     public function deleteListFile($listFile)

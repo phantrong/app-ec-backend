@@ -38,7 +38,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/server-status', function () {
-    return response()->json(DB::table('dtb_admins')->get());
+    return response()->json(env('APP_PATH'));
     return response()->json([
         'success' => true,
         'message' => 'server running',

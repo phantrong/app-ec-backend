@@ -77,7 +77,7 @@ class CategoryController extends BaseController
         try {
             $image = $this->uploadService->uploadFileStorage($request->image);
             $data = $request->only('name', 'status');
-            $data['image_path'] = URL::to('/') . '/' . $image;
+            $data['image_path'] = env('APP_PATH') . $image;
             $this->categoryService->createCategory($data);
             return $this->sendResponse();
         } catch (\Exception $e) {
@@ -101,7 +101,7 @@ class CategoryController extends BaseController
             $data = $request->only('name', 'status');
             if ($request->image) {
                 $image = $this->uploadService->uploadFileStorage($request->image);
-                $data['image_path'] = URL::to('/') . '/' . $image;
+                $data['image_path'] = env('APP_PATH') . $image;
             }
             $this->categoryService->updateCategory($categoryId, $data);
             return $this->sendResponse();
