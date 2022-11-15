@@ -97,7 +97,7 @@ class UploadService
             Storage::makeDirectory('public/images'); //creates directory
             @chmod('public/images/', 0755);
         }
-        return $file->storeAs('uploads', $fileName);
+        return $file->move('uploads', $fileName);
     }
 
     public function deleteListFile($listFile)
