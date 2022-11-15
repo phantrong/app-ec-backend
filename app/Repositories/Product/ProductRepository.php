@@ -59,7 +59,6 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
     public function getProductByFilter($request, $customerId = null, $isFavorite = null)
     {
-        $productPrice = $this->getPriceMinMaxProduct();
         $keyWord = $request['keyword'] ?? null;
         $productId = $request['product_id'] ?? [];
         $categoryId = $request['category_id'] ?? [];
@@ -73,10 +72,9 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         return $this->model->select(
             "$tableProduct.id",
             "$tableProduct.name",
-            "product_price.min_price",
-            "product_price.max_price",
-            "product_price.min_discount",
-            "product_price.max_discount",
+            "$tableProduct.price",
+            "$tableProduct.description",
+            "$tableProduct.discount",
             "$tableProduct.created_at",
             "$tableProduct.category_id",
             "$tableProduct.brand_id",
@@ -84,11 +82,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 EnumProduct::DAY_PRODUCT_NEW . " THEN 0 ELSE 1 END as status")
         )
             ->join($tableStore, "$tableStore.id", '=', "$tableProduct.store_id")
-            ->joinSub($productPrice, 'product_price', function ($join) use ($tableProduct) {
-                $join->on('product_price.product_id', '=', "$tableProduct.id");
-            })
             ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
-            ->whereNotNull("$tableStore.acc_stripe_id")
             ->when($keyWord, function ($query) use ($keyWord, $tableProduct) {
                 return $query->where("$tableProduct.name", 'like', '%' . $keyWord . '%');
             })
@@ -101,19 +95,17 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->when($brandId, function ($query) use ($brandId, $tableProduct) {
                 return $query->whereIn("$tableProduct.brand_id", $brandId);
             })
-            ->when($priceMin !== null && $priceMax == null, function ($query) use ($priceMin) {
-                return $query->where(function ($query) use ($priceMin) {
-                    return $query->where('product_price.min_discount', '>=', $priceMin)
-                        ->orwhere('product_price.max_discount', '>=', $priceMin);
+            ->when($priceMin !== null && $priceMax == null, function ($query) use ($priceMin, $tableProduct) {
+                return $query->where(function ($query) use ($priceMin, $tableProduct) {
+                    return $query->where("$tableProduct.discount", '>=', $priceMin);
                 });
             })
-            ->when($priceMax !== null && $priceMin == null, function ($query) use ($priceMax) {
-                return $query->where('product_price.min_discount', '<=', $priceMax);
+            ->when($priceMax !== null && $priceMin == null, function ($query) use ($priceMax, $tableProduct) {
+                return $query->where("$tableProduct.discount", '<=', $priceMax);
             })
-            ->when($priceMin !== null && $priceMax !== null, function ($query) use ($priceMin, $priceMax) {
-                return $query->where(function ($query) use ($priceMin, $priceMax) {
-                    return  $query->whereBetween('product_price.min_discount', [$priceMin, $priceMax])
-                        ->orWhereBetween('product_price.max_discount', [$priceMin, $priceMax]);
+            ->when($priceMin !== null && $priceMax !== null, function ($query) use ($priceMin, $priceMax, $tableProduct) {
+                return $query->where(function ($query) use ($priceMin, $priceMax, $tableProduct) {
+                    return  $query->whereBetween("$tableProduct.discount", [$priceMin, $priceMax]);
                 });
             })
             ->when($storeId, function ($query) use ($storeId, $tableProduct) {
@@ -133,15 +125,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 'productMediasImage:product_id,media_path,media_type'
             ])
             ->withCount([
-                'productFavorites as total_favorite',
-                'productClasses as stock' => function ($query) {
-                    return $query->where('stock', '>', self::OUT_OF_STOCK);
-                },
-                'productClasses as sale' => function ($query) {
-                    return $query->whereRaw('price > discount');
-                }
-            ])
-            ->having('stock', '>', self::OUT_OF_STOCK);
+                'productFavorites as total_favorite'
+            ]);
     }
 
     public function getPriceMinMaxProduct()
@@ -196,10 +181,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 "$tableProduct.description",
                 "$tableProduct.property",
                 "$tableProduct.brand_id",
-                "product_price.min_price",
-                "product_price.max_price",
-                "product_price.min_discount",
-                "product_price.max_discount",
+                "$tableProduct.price",
+                "$tableProduct.discount",
                 DB::raw("CASE WHEN DATEDIFF(now(), DATE($tableProduct.created_at)) > " .
                     EnumProduct::DAY_PRODUCT_NEW . " THEN 0 ELSE 1 END as status")
             )
@@ -211,25 +194,10 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->with([
                 'brand:id,name',
                 'productMedias',
-                'productClasses:id,product_id,stock,price,discount',
-                'productClasses.productTypes:id,product_class_id,product_type_config_id'
-            ])
-            ->with([
-                'productTypeConfig' => function ($query) {
-                    $query->select('id', 'product_id', 'type_name', 'name')->orderBy('name');
-                }
             ])
             ->with(['productFavorites' => function ($query) use ($customerId) {
                 return $query->select('id', 'product_id')->where('customer_id', $customerId);
             }])
-            ->withCount([
-                'productClasses as stock' => function ($query) {
-                    return $query->where('stock', '>', self::OUT_OF_STOCK);
-                },
-                'productClasses as sale' => function ($query) {
-                    return $query->whereRaw('price > discount');
-                }
-            ])
             ->first();
     }
 
@@ -271,23 +239,15 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             "$tableProduct.name",
             "$tableProduct.status",
             'description',
-            'property',
             "$tableProduct.category_id",
             "$tableBrand.name as brand_name",
             "$tableCategory.name as category_name",
             'brand_id',
-            'note'
         )
             ->join($tableCategory, "$tableCategory.id", '=', "$tableProduct.category_id")
             ->join($tableBrand, "$tableBrand.id", '=', "$tableProduct.brand_id")
             ->with([
                 'productMedias:id,product_id,media_type,media_path',
-                'productClasses.productTypeConfigs:id,name,type_name'
-            ])
-            ->with([
-                'productTypeConfig' => function ($query) {
-                    $query->select('id', 'product_id', 'type_name', 'name')->orderByDesc('id');
-                }
             ])
             ->where("$tableProduct.id", $productId)
             ->first();
@@ -295,58 +255,35 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
     public function getAllProductByStore($request, $storeId, $isCMS = false, $isPaginate = true)
     {
-        $productClassSale = $this->getTotalProductClassHasSale();
         $perPage = $request['per_page'] ?? ($isCMS ? self::PRODUCT_CMS_LIMIT : self::PRODUCT_LIMIT);
-        $productPrice = $this->getPriceMinMaxProduct();
         $priceMin = $request['price_min'] ?? null;
         $priceMax = $request['price_max'] ?? null;
-        $status = $request['status'] ?? null;
         $name = $request['name'] ?? null;
         $tableProduct = $this->model->getTableName();
-        $tableProductClass = ProductClass::getTableName();
         $products = $this->model->select(
             'id',
             'name',
             'store_id',
             'status',
-            'product_price.min_price',
-            'product_price.max_price',
-            'product_price.min_discount',
-            'product_price.max_discount'
+            'price',
+            'discount',
+            'description',
         )
-            ->joinSub($productPrice, 'product_price', function ($join) use ($tableProduct) {
-                $join->on('product_price.product_id', '=', "$tableProduct.id");
-            })
             ->when($name, function ($query) use ($name, $tableProduct) {
                 return $query->where("$tableProduct.name", 'like', '%' . $name . '%');
             })
             ->when($priceMin !== null && $priceMax == null, function ($query) use ($priceMin) {
                 return $query->where(function ($query) use ($priceMin) {
-                    return $query->where('product_price.min_discount', '>=', $priceMin)
-                        ->orwhere('product_price.max_discount', '>=', $priceMin);
+                    return $query->where('discount', '>=', $priceMin);
                 });
             })
             ->when($priceMax !== null && $priceMin == null, function ($query) use ($priceMax) {
-                return $query->where('product_price.min_discount', '<=', $priceMax);
+                return $query->where('discount', '<=', $priceMax);
             })
             ->when($priceMin !== null && $priceMax !== null, function ($query) use ($priceMin, $priceMax) {
                 return $query->where(function ($query) use ($priceMin, $priceMax) {
-                    return  $query->whereBetween('product_price.min_discount', [$priceMin, $priceMax])
-                        ->orWhereBetween('product_price.max_discount', [$priceMin, $priceMax]);
+                    return  $query->whereBetween('discount', [$priceMin, $priceMax]);
                 });
-            })
-            ->when($status, function ($query) use ($status, $tableProduct) {
-                switch ($status) {
-                    case EnumProduct::STATUS_AVAILABLE:
-                        return $query->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
-                            ->having('stock', '>', self::OUT_OF_STOCK);
-                    case EnumProduct::STATUS_NO_PUBLIC:
-                    case EnumProduct::STATUS_VIOLATION:
-                        return $query->where("$tableProduct.status", $status);
-                    case EnumProduct::STATUS_UN_AVAILABLE:
-                        return $query->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
-                            ->having('stock', self::OUT_OF_STOCK);
-                }
             })
             ->when($storeId !== null, function ($query) use ($tableProduct, $storeId) {
                 return $query->where("$tableProduct.store_id", '=', $storeId);
@@ -354,31 +291,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->orderByDesc("$tableProduct.created_at")
             ->with([
                 'productMedias:product_id,media_path',
-                'productClasses' => function ($query) use ($productClassSale, $tableProductClass) {
-                    return $query->select(
-                        "$tableProductClass.id",
-                        "$tableProductClass.product_id",
-                        "$tableProductClass.price",
-                        "$tableProductClass.discount",
-                        "$tableProductClass.stock",
-                        'product_class_sale.total_product',
-                        'product_class_sale.revenue'
-                    )
-                        ->leftJoinSub(
-                            $productClassSale,
-                            'product_class_sale',
-                            function ($join) use ($tableProductClass) {
-                                $join->on("$tableProductClass.id", 'product_class_sale.id');
-                            }
-                        );
-                },
-                'productClasses.productTypeConfigs:type_name',
                 'store:id,name'
-            ])
-            ->withCount([
-                'productClasses as stock' => function ($query) {
-                    return $query->where('stock', '>', self::OUT_OF_STOCK);
-                }
             ]);
         return $isPaginate ? $products->paginate($perPage) : $products->get();
     }
@@ -518,15 +431,6 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
     public function getProductStockingByStore($storeId)
     {
-        return $this->model
-            ->where('store_id', $storeId)
-            ->where('status', EnumProduct::STATUS_PUBLIC)
-            ->withCount([
-                'productClasses as stock' => function ($query) {
-                    return $query->where('stock', '>', self::OUT_OF_STOCK);
-                }
-            ])
-            ->having('stock', '>', 0)
-            ->count();
+        return 9999;
     }
 }

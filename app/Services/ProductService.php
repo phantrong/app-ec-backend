@@ -49,10 +49,6 @@ class ProductService
         $product = $this->productRepository->getDetailProduct($id, $customerId);
         if ($product) {
             $product = $product->toArray();
-            $configTypes = $product['product_type_config'];
-            $productClass = $product['product_classes'];
-            $product['product_type_config'] = $this->convertDataProductType($configTypes);
-            $product['product_classes'] = $this->convertDataProductClass($productClass);
             return $product;
         }
         return;
@@ -153,19 +149,6 @@ class ProductService
     {
         $this->productRepository->update($productId, $dataProduct);
         return $this->productRepository->find($productId);
-    }
-
-    public function convertDataProductClass($productClasses)
-    {
-        foreach ($productClasses as $index => $productClass) {
-            $typeConfigId = [];
-            foreach ($productClass['product_types'] as $productType) {
-                $typeConfigId[] = $productType['product_type_config_id'];
-            }
-            $productClass['product_types'] = $typeConfigId;
-            $productClasses[$index] = $productClass;
-        }
-        return $productClasses;
     }
 
     public function checkProductSold($productId): bool

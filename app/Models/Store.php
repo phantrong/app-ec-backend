@@ -16,6 +16,16 @@ class Store extends CoreModel
 
     protected $guarded = [];
 
+    protected $fillable = [
+        'name',
+        'code',
+        'status',
+        'description',
+        'address',
+        'avatar',
+        'cover_image'
+    ];
+
     /**
      * Set the store's commission.
      *
@@ -46,35 +56,35 @@ class Store extends CoreModel
         return $this->hasOne(Customer::class, 'store_id', 'id');
     }
 
-    public function province(): HasOne
-    {
-        return $this->hasOne(Province::class, 'id', 'province_id');
-    }
+    // public function province(): HasOne
+    // {
+    //     return $this->hasOne(Province::class, 'id', 'province_id');
+    // }
 
-    public function messages(): HasMany
-    {
-        return $this->hasMany(Messenger::class);
-    }
+    // public function messages(): HasMany
+    // {
+    //     return $this->hasMany(Messenger::class);
+    // }
 
-    public function stripe()
-    {
-        return $this->hasOne(Stripe::class, 'person_stripe_id', 'acc_stripe_id');
-    }
+    // public function stripe()
+    // {
+    //     return $this->hasOne(Stripe::class, 'person_stripe_id', 'acc_stripe_id');
+    // }
 
-    public function bankHistoryCurrent()
-    {
-        return $this->hasOne(BankHistory::class, 'id', 'bank_history_id_current');
-    }
+    // public function bankHistoryCurrent()
+    // {
+    //     return $this->hasOne(BankHistory::class, 'id', 'bank_history_id_current');
+    // }
 
     public function revenueOrders()
     {
         return $this->hasMany(RevenueOrder::class, 'store_id', 'id');
     }
 
-    public function livestreams()
-    {
-        return $this->hasMany(LiveStream::class, 'store_id', 'id');
-    }
+    // public function livestreams()
+    // {
+    //     return $this->hasMany(LiveStream::class, 'store_id', 'id');
+    // }
 
     public function owner()
     {

@@ -20,15 +20,12 @@ class Staff extends Authenticatable
 
     protected $fillable = [
         'phone',
-        'gender',
-        'address',
         'status',
         'email',
         'password',
         'store_id',
         'is_owner',
-        'name',
-        'verify_content'
+        'name'
     ];
 
     protected $hidden = ['password'];

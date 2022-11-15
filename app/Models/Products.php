@@ -23,9 +23,8 @@ class Products extends CoreModel
         'description',
         'brand_id',
         'category_id',
-        'property',
-        'note',
-        'last_status',
+        'price',
+        'discount'
     ];
 
     public function productMedias()
@@ -39,10 +38,10 @@ class Products extends CoreModel
             ->where('media_type', EnumProduct::MEDIA_TYPE_IMAGE);
     }
 
-    public function productClasses(): HasMany
-    {
-        return $this->hasMany(ProductClass::class, 'product_id', 'id');
-    }
+    // public function productClasses(): HasMany
+    // {
+    //     return $this->hasMany(ProductClass::class, 'product_id', 'id');
+    // }
 
     public function productFavorites(): HasMany
     {
@@ -59,10 +58,10 @@ class Products extends CoreModel
         return $this->belongsTo(Brand::class, 'brand_id', 'id');
     }
 
-    public function productTypeConfig(): HasMany
-    {
-        return $this->hasMany(ProductTypeConfig::class, 'product_id', 'id');
-    }
+    // public function productTypeConfig(): HasMany
+    // {
+    //     return $this->hasMany(ProductTypeConfig::class, 'product_id', 'id');
+    // }
 
     public function store()
     {

@@ -21,23 +21,15 @@ class RefactorDb extends Seeder
      */
     public function run()
     {
-        $tblBrand = Brand::getTableName();
-        $tblStaff = Staff::getTableName();
-        $tblStripe = Stripe::getTableName();
-        $tblProvince = Province::getTableName();
-        $tblStore = Store::getTableName();
-        DB::unprepared(
-            "ALTER TABLE $tblBrand MODIFY COLUMN category_id bigint;
-            ALTER TABLE $tblStaff MODIFY COLUMN store_id bigint;
-            ALTER TABLE $tblStore CHANGE address address varchar(255) AFTER place,
-                MODIFY COLUMN date_start date;
-            ALTER TABLE  $tblStripe CHANGE address address varchar(255) AFTER province_id,
-                CHANGE address_kana address_kana varchar(255) NULL AFTER address,
-                CHANGE place_kana place_kana varchar(255) NULL AFTER address_kana,
-                CHANGE city_kana city_kana varchar(255) NULL AFTER place_kana;
-            ALTER TABLE $tblProvince ADD COLUMN order_number int DEFAULT 1;
-            UPDATE $tblProvince set order_number = id WHERE id >= 1;
-            "
-        );
+        // stores
+        DB::unprepared("
+        ALTER TABLE `dtb_stores` DROP `customer_id`, DROP `bank_history_id_current`, DROP `province_id`, DROP `phone`, DROP `work_day`, DROP `date_start`, DROP `time_start`, DROP `time_end`, DROP `link_instagram`, DROP `acc_stripe_id`, DROP `company`, DROP `postal_code`, DROP `city`, DROP `place`, DROP `fax`, DROP `link`, DROP `commission`, DROP `date_applicable_commission`, DROP `date_approved`;");
+
+        // staff
+        DB::unprepared("ALTER TABLE `dtb_staffs` DROP `gender`, DROP `address`, DROP `verify_content`;");
+
+        // product
+        DB::unprepared("ALTER TABLE `dtb_products` DROP `note`, DROP `property`, DROP `last_status`;
+        ALTER TABLE `dtb_products` ADD `price` DECIMAL(12,2) NOT NULL AFTER `description`, ADD `discount` DECIMAL(12,2) NOT NULL AFTER `price`;");
     }
 }
