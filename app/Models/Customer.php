@@ -18,9 +18,6 @@ class Customer extends Authenticatable
     protected $fillable = [
         'status',
         'name',
-        'surname',
-        'name_furigana',
-        'surname_furigana',
         'email',
         'password',
         'verify_content',
@@ -29,8 +26,7 @@ class Customer extends Authenticatable
         'birthday',
         'avatar',
         'send_mail',
-        'store_id',
-        'status_signup_store'
+        'address'
     ];
 
     protected $hidden = ['password', 'verify_content'];

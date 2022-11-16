@@ -237,19 +237,13 @@ class CustomerService
      */
     public function getCustomerListCMS(array $condition)
     {
-        $tblCustomer = Customer::getTableName();
-        $tblCustomerAddress = CustomerAddress::getTableName();
         $columns = [
-            "$tblCustomer.id",
+            'id',
             'name',
-            'surname',
             'email',
             'phone',
-            "$tblCustomerAddress.province_name",
-            "$tblCustomerAddress.place",
-            "$tblCustomerAddress.city",
-            "$tblCustomerAddress.home_address",
-            "$tblCustomer.created_at"
+            'address',
+            'created_at',
         ];
 
         return $this->customerRepository->getCustomerList($condition, $columns);

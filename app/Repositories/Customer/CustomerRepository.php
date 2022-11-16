@@ -32,15 +32,12 @@ class CustomerRepository extends BaseRepository implements CustomerRepositoryInt
     public function getCustomerList(array $condition, $columns = ['*'])
     {
         $tblCustomer = Customer::getTableName();
-        $tblCustomerAddress = CustomerAddress::getTableName();
 
         $perPage = Arr::get($condition, 'per_page', self::PER_PAGE_IN_CMS);
         $page = Arr::get($condition, 'page', 1);
 
         return $this->model
-            ->join($tblCustomerAddress, "$tblCustomer.id", '=', 'customer_id')
             ->where("$tblCustomer.status", EnumCustomer::STATUS_ACTIVE)
-            ->whereNull("$tblCustomerAddress.deleted_at")
             ->when(isset($condition['name']), function ($query) use ($condition) {
                 if ($condition['name'][0] == '%') {
                     $condition['name'] = "/" . $condition['name'];
