@@ -75,11 +75,8 @@ class CustomerRepository extends BaseRepository implements CustomerRepositoryInt
     public function getCustomerDetail(int $id, $columns = ['*'])
     {
         $tblCustomer = Customer::getTableName();
-        $tblCustomerAddress = CustomerAddress::getTableName();
 
         return $this->model
-            ->join($tblCustomerAddress, "$tblCustomer.id", '=', 'customer_id')
-            ->whereNull("$tblCustomerAddress.deleted_at")
             ->where("$tblCustomer.id", $id)
             ->first($columns);
     }

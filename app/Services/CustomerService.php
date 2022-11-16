@@ -257,28 +257,16 @@ class CustomerService
      */
     public function getCustomerDetailCMS(int $id)
     {
-        $tblCustomer = Customer::getTableName();
-        $tblCustomerAddress = CustomerAddress::getTableName();
         $columns = [
-            "$tblCustomer.id",
+            'id',
             'avatar',
             'name',
-            'surname',
             'phone',
             'email',
             'birthday',
             'gender',
-            "$tblCustomerAddress.province_name",
-            "$tblCustomerAddress.place",
-            "$tblCustomerAddress.city",
-            "$tblCustomerAddress.home_address",
-            DB::raw(
-                "CONCAT($tblCustomerAddress.province_name,' ',
-            $tblCustomerAddress.city,' ',
-            $tblCustomerAddress.place,' ',
-            COALESCE($tblCustomerAddress.home_address,'')) as address_detail"
-            ),
-            "$tblCustomer.created_at"
+            'address',
+            'created_at',
         ];
 
         $customer = $this->customerRepository->getCustomerDetail($id, $columns);
