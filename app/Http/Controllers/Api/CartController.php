@@ -37,9 +37,9 @@ class CartController extends BaseController
     {
         try {
             $key = auth('sanctum')->check() ? auth('sanctum')->user()->id : $request->cart_key;
-            $productClassId = (int) $request->product_class_id;
+            $productId = (int) $request->product_id;
             $quantity = (int) $request->quantity;
-            $result =  $this->cartService->addCart($productClassId, $quantity, $key);
+            $result =  $this->cartService->addCart($productId, $quantity, $key);
             if (is_array($result)) {
                 return $this->sendResponse($result['errorCode'], $result['status'], $result['data']);
             }

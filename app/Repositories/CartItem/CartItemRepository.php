@@ -14,24 +14,24 @@ class CartItemRepository extends BaseRepository implements CartItemRepositoryInt
         return CartItem::class;
     }
 
-    public function createCarItem($cartId, $productClassId, $quantity)
+    public function createCarItem($cartId, $productId, $quantity)
     {
         $data = [
             'cart_id' => $cartId,
-            'product_classes_id' => $productClassId,
+            'product_id' => $productId,
             'quantity' => $quantity,
         ];
         return $this->model->create($data);
     }
 
-    public function forceDeletedCartItemByProduct($productClassId, $cartDelete)
+    public function forceDeletedCartItemByProduct($productId, $cartDelete)
     {
         $tblCartItem = CartItem::getTableName();
         $tblCart = Cart::getTableName();
         $customerId = (int)$cartDelete;
 
         return $this->model->rightJoin("$tblCart", "$tblCart.id", '=', "$tblCartItem.cart_id")
-            ->where("$tblCartItem.product_classes_id", $productClassId)
+            ->where("$tblCartItem.product_id", $productId)
             ->where(function ($query) use ($tblCart, $cartDelete, $customerId) {
                 $query->where("$tblCart.cart_key", "$cartDelete")
                     ->orWhere("$tblCart.customer_id", $customerId);
@@ -56,11 +56,9 @@ class CartItemRepository extends BaseRepository implements CartItemRepositoryInt
 
     public function deleteCateItemByProduct($productId)
     {
-        $tableProductClass = ProductClass::getTableName();
         $tableCartItem = CartItem::getTableName();
         return $this->model
-            ->join($tableProductClass, "$tableProductClass.id", '=', "$tableCartItem.product_classes_id")
-            ->where("$tableProductClass.product_id", $productId)
+            ->where("$tableCartItem.product_id", $productId)
             ->delete();
     }
 }

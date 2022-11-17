@@ -50,19 +50,19 @@ class CustomerService
     {
         $customer = $this->getCustomerByEmail($data['email']);
         $data['password'] = Hash::make($data['password']);
-        $data['status'] = EnumCustomer::STATUS_CREATE;
-        $data['verify_content'] = Str::random();
+        // $data['status'] = EnumCustomer::STATUS_CREATE;
+        $data['status'] = EnumCustomer::STATUS_ACTIVE;
         if ($customer) {
             $this->customerRepository->update($customer->id, $data);
         } else {
             $customer = $this->customerRepository->create($data);
         }
-        $links = [
-            'link_verify' => config('services.link_service_back') .
-                'customers/verify/' . $data['verify_content'] . '/' . encrypt($customer->id),
-            'link_home' => config('services.link_service_front')
-        ];
-        SendMailCustomer::dispatch($customer, $links);
+        // $links = [
+        //     'link_verify' => config('services.link_service_back') .
+        //         'customers/verify/' . $data['verify_content'] . '/' . encrypt($customer->id),
+        //     'link_home' => config('services.link_service_front')
+        // ];
+        // SendMailCustomer::dispatch($customer, $links);
         return $this->getCustomerByEmail($customer->email);
     }
 
@@ -113,18 +113,18 @@ class CustomerService
     {
         $result = ['status' => JsonResponse::HTTP_UNAUTHORIZED];
         $customer = $this->getCustomerByEmail($data['email']);
-        if ($customer && !$customer->status_signup_store) {
+        if ($customer) {
             if (Hash::check($data['password'], $customer->password) &&
                 $customer->status == EnumCustomer::STATUS_ACTIVE
             ) {
-                $staff = $this->staffRepository->getStaffByEmail($data['email']);
-                $tokenStaff = $staff && $staff->is_owner ?
-                    $staff->createToken('authToken', [config('auth.token_staff')])->plainTextToken : null;
+                // $staff = $this->staffRepository->getStaffByEmail($data['email']);
+                // $tokenStaff = $staff && $staff->is_owner ?
+                //     $staff->createToken('authToken', [config('auth.token_staff')])->plainTextToken : null;
                 $tokenCustomer = $customer->createToken('authToken', [config('auth.token_customer')])
                     ->plainTextToken;
                 $result['status'] = JsonResponse::HTTP_OK;
                 $result['token_customer'] = $tokenCustomer;
-                $result['token_staff'] = $tokenStaff;
+                // $result['token_staff'] = $tokenStaff;
             } elseif ($customer->status == EnumCustomer::STATUS_BLOCKED) {
                 $result['status'] = JsonResponse::HTTP_FORBIDDEN;
             }

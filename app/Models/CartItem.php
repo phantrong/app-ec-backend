@@ -13,7 +13,7 @@ class CartItem extends CoreModel
 
     protected $fillable = [
         'cart_id',
-        'product_classes_id',
+        'product_id',
         'quantity'
     ];
 
@@ -22,8 +22,8 @@ class CartItem extends CoreModel
         return $this->belongsTo(Cart::class);
     }
 
-    public function productClassItem()
+    public function products()
     {
-        return $this->belongsTo(ProductClass::class, 'product_classes_id', 'id');
+        return $this->belongsTo(Products::class, 'product_id', 'id');
     }
 }

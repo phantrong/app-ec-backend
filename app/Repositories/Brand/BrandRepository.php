@@ -45,11 +45,17 @@ class BrandRepository extends BaseRepository implements BrandRepositoryInterface
     {
         $perPage = $request['per_page'] ?? self::PER_PAGE;
         $categoryId = $request['category_id'] ?? null;
-        return $this->model->select('id', 'name')
+        $paginate = $request['is_paginate'] ?? true;
+        if ($paginate) return $this->model->select('id', 'name')
             ->when($categoryId, function ($query) use ($categoryId) {
                 return $query->where('category_id', $categoryId);
             })
             ->paginate($perPage);
+        return $this->model->select('id', 'name')
+            ->when($categoryId, function ($query) use ($categoryId) {
+                return $query->where('category_id', $categoryId);
+            })
+            ->get();
     }
 
     public function getBrandByCategory($categoryId, $request = [])

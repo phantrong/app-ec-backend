@@ -47,9 +47,8 @@ class CartRepository extends BaseRepository implements CartRepositoryInterface
         $customerId = (int)$key;
 
         return $this->model->with([
-            'cartItem.productClassItem.product.store:id,name,status,avatar,code',
-            'cartItem.productClassItem.product.productMediasImage',
-            'cartItem.productClassItem.productTypeConfigs:type_name,name'
+            'cartItem.products.store:id,name,status,avatar,code',
+            'cartItem.products.productMediasImage',
         ])
             ->where(function ($query) use ($tblCart, $key, $customerId) {
                 $query->where("$tblCart.cart_key", "$key")

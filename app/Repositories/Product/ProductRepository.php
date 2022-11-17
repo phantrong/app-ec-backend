@@ -36,6 +36,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $perPage = $request['per_page'] ?? self::PER_PAGE;
         $products = $this->getProductByFilter($request, $customerId, $isFavorite);
         $sortType = $request['sort'] ?? EnumProductSort::SORT_CREATED_AT;
+        $paginate = $request['is_paginate'] ?? true;
         $tableProduct = Products::getTableName();
         switch ($sortType) {
             case EnumProductSort::SORT_PRICE_CHEAP:
@@ -51,7 +52,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 $products = $products->orderbyDesc("$tableProduct.created_at");
                 break;
         }
-        if ($isFavorite) {
+        if (!$paginate || $isFavorite) {
             return $products->orderByDesc("$tableProduct.id")->get();
         }
         return $products->orderByDesc("$tableProduct.id")->paginate($perPage);
@@ -82,7 +83,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 EnumProduct::DAY_PRODUCT_NEW . " THEN 0 ELSE 1 END as status")
         )
             ->join($tableStore, "$tableStore.id", '=', "$tableProduct.store_id")
-            ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
+            // ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
             ->when($keyWord, function ($query) use ($keyWord, $tableProduct) {
                 return $query->where("$tableProduct.name", 'like', '%' . $keyWord . '%');
             })
@@ -171,7 +172,6 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function getDetailProduct($id, $customerId = null)
     {
         $tableProduct = Products::getTableName();
-        $productPrice = $this->getPriceMinMaxProduct();
         return $this->model
             ->select(
                 "$tableProduct.id",
@@ -179,16 +179,12 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 "$tableProduct.status",
                 "$tableProduct.store_id",
                 "$tableProduct.description",
-                "$tableProduct.property",
                 "$tableProduct.brand_id",
                 "$tableProduct.price",
                 "$tableProduct.discount",
                 DB::raw("CASE WHEN DATEDIFF(now(), DATE($tableProduct.created_at)) > " .
                     EnumProduct::DAY_PRODUCT_NEW . " THEN 0 ELSE 1 END as status")
             )
-            ->joinSub($productPrice, 'product_price', function ($join) use ($tableProduct) {
-                $join->on("$tableProduct.id", '=', 'product_price.product_id');
-            })
             ->where("$tableProduct.id", $id)
             ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
             ->with([

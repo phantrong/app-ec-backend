@@ -84,29 +84,13 @@ class CustomerController extends BaseController
         try {
             $dataCustomer = $request->only(
                 'name',
-                'surname',
-                'name_furigana',
-                'surname_furigana',
                 'email',
                 'password',
-                'phone',
                 'gender',
-                'birthday'
+                'birthday',
+                'phone'
             );
-            $dataCustomerAddress = $request->only(
-                'province_name',
-                'postal_code',
-                'city',
-                'place',
-                'home_address'
-            );
-            $customer = $this->customerService->store($dataCustomer);
-            if ($customer->address) {
-                $this->customerAddressService->updateCustomerAddress($customer->id, $dataCustomerAddress);
-            } else {
-                $dataCustomerAddress['customer_id'] = $customer->id;
-                $this->customerAddressService->createCustomerAddress($dataCustomerAddress);
-            }
+            $this->customerService->store($dataCustomer);
             DB::commit();
             return $this->sendResponse();
         } catch (\Exception $e) {
@@ -139,7 +123,7 @@ class CustomerController extends BaseController
             return $this->sendResponse([
                 'token_type' => 'Bearer',
                 'token_customer' => $result['token_customer'],
-                'token_staff' => $result['token_staff']
+                // 'token_staff' => $result['token_staff']
             ]);
         } catch (\Exception $e) {
             return $this->sendError($e);

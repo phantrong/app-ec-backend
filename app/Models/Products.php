@@ -24,7 +24,8 @@ class Products extends CoreModel
         'brand_id',
         'category_id',
         'price',
-        'discount'
+        'discount',
+        'stock'
     ];
 
     public function productMedias()

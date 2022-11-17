@@ -141,26 +141,26 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
     public function searchStore($request)
     {
         $keyWord = $request['keyword'] ?? null;
-        $provinceId = $request['province_id'] ?? null;
+        // $provinceId = $request['province_id'] ?? null;
         $perPage = $request['per_page'] ?? self::PER_PAGE;
+        $paginate = $request['is_paginate'] ?? true;
         $tblStore = Store::getTableName();
-        $tblProvince = Province::getTableName();
-        return $this->model->select(
+        $query = $this->model->select(
             "$tblStore.id",
             "$tblStore.avatar",
             "$tblStore.name",
-            "$tblProvince.name as province",
+            "$tblStore.address",
             "$tblStore.description"
         )
-            ->join('mtb_provinces', 'mtb_provinces.id', 'dtb_stores.province_id')
             ->where("$tblStore.status", EnumStore::STATUS_CONFIRMED)
             ->when($keyWord, function ($query) use ($keyWord) {
                 return $query->where('dtb_stores.name', 'like', '%'.$keyWord.'%');
-            })
-            ->when($provinceId, function ($query) use ($provinceId) {
-                return $query->whereIn('dtb_stores.province_id', $provinceId);
-            })
-            ->paginate($perPage);
+            });
+            // ->when($provinceId, function ($query) use ($provinceId) {
+            //     return $query->whereIn('dtb_stores.province_id', $provinceId);
+            // })
+        if ($paginate) return $query->paginate($perPage);
+        return $query->get();
     }
 
     public function getStoreInfo($storeId)

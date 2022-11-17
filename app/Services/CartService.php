@@ -7,6 +7,7 @@ use App\Repositories\CartItem\CartItemRepository;
 use App\Repositories\Cart\CartRepository;
 use App\Repositories\Order\OrderRepository;
 use App\Repositories\OrderItem\OrderItemRepository;
+use App\Repositories\Product\ProductRepository;
 use App\Repositories\ProductClass\ProductClassRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -17,25 +18,25 @@ class CartService
 {
     private CartItemRepository $cartItemRepository;
     private CartRepository $cartRepository;
-    private ProductClassRepository $productClassRepository;
+    private ProductRepository $productRepository;
     private OrderItemRepository $orderItemRepository;
 
     public function __construct(
         CartItemRepository $cartItemRepository,
         CartRepository $cartRepository,
-        ProductClassRepository $productClassRepository,
+        ProductRepository $productRepository,
         OrderItemRepository $orderItemRepository
     ) {
         $this->cartItemRepository = $cartItemRepository;
         $this->cartRepository = $cartRepository;
-        $this->productClassRepository = $productClassRepository;
+        $this->productRepository = $productRepository;
         $this->orderItemRepository = $orderItemRepository;
     }
 
-    public function addCart($productClassId, $quantity, $key)
+    public function addCart($productId, $quantity, $key)
     {
-        $productClass = $this->productClassRepository->find($productClassId);
-        if (!$productClass) {
+        $product = $this->productRepository->find($productId);
+        if (!$product) {
             return responseArrError(JsonResponse::HTTP_NOT_FOUND, [config('errorCodes.cart.product_class_not_found')]);
         }
         $cart = $this->cartRepository->getCartByKey($key);
@@ -43,7 +44,7 @@ class CartService
         DB::beginTransaction();
         try {
             if ($cart) {
-                $result = $this->updateInsertCartItem($cart, $productClass, $quantity);
+                $result = $this->updateInsertCartItem($cart, $product, $quantity);
                 if (is_array($result)) {
                     return $result;
                 }
@@ -54,18 +55,18 @@ class CartService
                         [config('errorCodes.cart.product_less_than_0')]
                     );
                 }
-                if ($productClass->stock < $quantity) {
+                if ($product->stock < $quantity) {
                     return responseArrError(
                         JsonResponse::HTTP_NOT_ACCEPTABLE,
                         [config('errorCodes.cart.not_enough_products_quantity')],
-                        $productClass->only(['id', 'stock'])
+                        $product->only(['id', 'stock'])
                     );
                 }
 
                 $cartNew = $this->cartRepository->createCart($key);
                 $this->cartItemRepository->createCarItem(
                     $cartNew->id,
-                    $productClassId,
+                    $product,
                     $quantity,
                 );
             }
@@ -87,46 +88,46 @@ class CartService
      * @param int $quantity
      * @return array|void
      */
-    private function updateInsertCartItem($cart, $productClassAdd, $quantity)
+    private function updateInsertCartItem($cart, $productAdd, $quantity)
     {
-        $productClassUpdate = $cart->cartItem->where('product_classes_id', $productClassAdd->id)->first();
+        $productUpdate = $cart->cartItem->where('product_id', $productAdd->id)->first();
 
-        if ($productClassUpdate) {
-            $productClassUpdate->quantity += $quantity;
+        if ($productUpdate) {
+            $productUpdate->quantity += $quantity;
 
-            if ($productClassUpdate->quantity <= 0) {
+            if ($productUpdate->quantity <= 0) {
                 return responseArrError(
                     JsonResponse::HTTP_NOT_ACCEPTABLE,
                     [config('errorCodes.cart.product_less_than_0')]
                 );
             }
-            if ($productClassAdd->stock == 0) {
+            if ($productAdd->stock == 0) {
                 return responseArrError(
                     JsonResponse::HTTP_NOT_ACCEPTABLE,
                     [config('errorCodes.cart.product_out_of_stock')]
                 );
             }
-            if ($productClassAdd->stock < $productClassUpdate->quantity) {
+            if ($productAdd->stock < $productUpdate->quantity) {
                 return responseArrError(
                     JsonResponse::HTTP_NOT_ACCEPTABLE,
                     [config('errorCodes.cart.not_enough_products_quantity')],
-                    $productClassAdd->only(['id', 'stock'])
+                    $productAdd->only(['id', 'stock'])
                 );
             }
 
-            $productClassUpdate->save();
+            $productUpdate->save();
         } else {
-            if ($productClassAdd->stock < $quantity) {
+            if ($productAdd->stock < $quantity) {
                 return responseArrError(
                     JsonResponse::HTTP_NOT_ACCEPTABLE,
                     [config('errorCodes.cart.not_enough_products_quantity')],
-                    $productClassAdd->only(['id', 'stock'])
+                    $productAdd->only(['id', 'stock'])
                 );
             }
 
             $this->cartItemRepository->createCarItem(
                 $cart->id,
-                $productClassAdd->id,
+                $productAdd->id,
                 $quantity,
             );
         }
@@ -143,17 +144,17 @@ class CartService
     public function listProductCart($key)
     {
         $cart = $this->cartRepository->getProductByKey($key);
-
+        // return $cart;
         $dataProduct = [];
         $dataStore = [];
         if ($cart) {
             foreach ($cart->cartItem as $item) {
-                if (!$item->productClassItem || !$item->productClassItem->product) {
+                if (!$item->products) {
                     continue;
                 }
-                $product = $item->productClassItem->product;
+                $product = $item->products;
 
-                if ($item->productClassItem &&
+                if ($item->products &&
                     $product->store &&
                     !isset($dataStore[$product->store_id])
                 ) {
@@ -168,13 +169,11 @@ class CartService
                     'cart_item_id' => $item->id,
                     'product_id' => $product->id,
                     'product_name' => $product->name,
-                    'product_class_id' => $item->product_classes_id,
                     'product_image' => $product->productMediasImage ? $product->productMediasImage->media_path : '',
-                    'price' => (float)$item->productClassItem->price,
-                    'price_discount' => (float)$item->productClassItem->discount,
-                    'stock' => $item->productClassItem->stock,
+                    'price' => (float)$item->products->price,
+                    'price_discount' => (float)$item->products->discount,
+                    'stock' => $item->products->stock,
                     'quantity' => $item->quantity,
-                    'types' => $item->productClassItem->productTypeConfigs,
                 ];
                 $dataProduct[$product->store_id][] = $arrProduct;
             }
