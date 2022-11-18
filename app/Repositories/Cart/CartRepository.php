@@ -67,7 +67,7 @@ class CartRepository extends BaseRepository implements CartRepositoryInterface
             'cartItem' => function ($q) use ($tblCartItem, $cartItemIds) {
                 $q->whereIn("$tblCartItem.id", $cartItemIds);
             },
-            'cartItem.productClassItem.product.store:id,name,status,avatar,code,commission',
+            'cartItem.products.store:id,name,status,avatar,code,commission',
         ])
             ->where(function ($query) use ($tblCart, $key, $customerId) {
                 $query->where("$tblCart.cart_key", "$key")

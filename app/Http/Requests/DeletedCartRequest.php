@@ -27,7 +27,7 @@ class DeletedCartRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'product_class_id' => 'required|int',
+            'product_id' => 'required|int',
         ];
 
         if (!auth('sanctum')->check()) {

@@ -66,7 +66,7 @@ class CartService
                 $cartNew = $this->cartRepository->createCart($key);
                 $this->cartItemRepository->createCarItem(
                     $cartNew->id,
-                    $product,
+                    $product->id,
                     $quantity,
                 );
             }

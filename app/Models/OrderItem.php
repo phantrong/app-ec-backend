@@ -15,7 +15,6 @@ class OrderItem extends CoreModel
 
     protected $fillable = [
         'sub_order_id',
-        'product_class_id',
         'price',
         'quantity',
         'cart_item_id'
@@ -24,11 +23,6 @@ class OrderItem extends CoreModel
     public function subOrder()
     {
         return $this->belongsTo(SubOrder::class);
-    }
-
-    public function productClass()
-    {
-        return $this->belongsTo(ProductClass::class)->withTrashed();
     }
 
     public function product()

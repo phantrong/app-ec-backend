@@ -69,16 +69,15 @@ class OrderService
 
         if ($cart) {
             foreach ($cart->cartItem as $item) {
-                if (!$item->productClassItem || !$item->productClassItem->product) {
+                if (!$item->products) {
                     continue;
                 }
 
-                $productClassItem = $item->productClassItem;
-                $product = $productClassItem->product;
-                $priceProduct = $productClassItem->discount;
+                $product = $item->products;
+                $priceProduct = $product->discount;
                 $priceProductOrder = (float)$priceProduct * $item->quantity;
 
-                if ($item->productClassItem && $product->store) {
+                if ($item->products && $product->store) {
                     if (isset($dataStores[$product->store_id])) {
                         $dataStores[$product->store_id]['total'] += $priceProductOrder;
                         $dataStores[$product->store_id]['total_payment'] += $priceProductOrder - 0; //discount
@@ -110,7 +109,6 @@ class OrderService
                     'sub_order_id' => null,
                     'cart_item_id' => $item->id,
                     'product_id' => $product->id,
-                    'product_class_id' => $item->product_classes_id,
                     'price' => (float)$priceProduct,
                     'quantity' => $item->quantity,
                     'created_at' => $now,
@@ -183,19 +181,13 @@ class OrderService
     public function createAddressShip($orderId, CreateOrderRequest $request)
     {
         $dataShip = $request->only([
-            'postal_code',
-            'receiver_name',
-            'receiver_name_furigana',
-            'email',
-            'phone_number',
-            'address_01',
-            'address_02',
-            'address_03',
-            'address_04',
+            'address',
         ]);
         $customer = auth('sanctum')->user() ?? null;
         if ($customer) {
             $dataShip['email'] = $customer->email;
+            $dataShip['receiver_name'] = $customer->name;
+            $dataShip['phone_number'] = $customer->phone;
         }
         $dataShip['order_id'] = $orderId;
 

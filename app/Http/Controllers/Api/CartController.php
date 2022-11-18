@@ -63,9 +63,9 @@ class CartController extends BaseController
     {
         try {
             $cartKey = auth('sanctum')->check() ? auth('sanctum')->user()->id : $request->cart_key;
-            $productClassId = (int) $request->product_class_id;
+            $productId = (int) $request->product_id;
 
-            return $this->sendResponse($this->cartService->deleteProductCart($productClassId, $cartKey));
+            return $this->sendResponse($this->cartService->deleteProductCart($productId, $cartKey));
         } catch (\Exception $e) {
             return $this->sendError($e);
         }
@@ -89,39 +89,39 @@ class CartController extends BaseController
 
         DB::beginTransaction();
         try {
-            $result = $this->cartService->updateQuantityProductWithCart($key, $cartItemIds);
-            if (is_array($result)) {
-                return $this->sendResponse($result['errorCode'], $result['status'], $result['data']);
-            }
+            // $result = $this->cartService->updateQuantityProductWithCart($key, $cartItemIds);
+            // if (is_array($result)) {
+            //     return $this->sendResponse($result['errorCode'], $result['status'], $result['data']);
+            // }
             $order = $this->orderService->createOrder($key, $cartItemIds);
             if (is_array($order)) {
                 return $this->sendResponse($order['errorCode'], $order['status']);
             }
             $this->orderService->createAddressShip($order->id, $request);
 
-            $paymentOrder = $this->getOrderPaymentById($order->id, $key);
-            if (!$paymentOrder) {
-                DB::rollBack();
-                return $this->sendResponse(
-                    [config('errorCodes.cart.order_not_item')],
-                    JsonResponse::HTTP_BAD_REQUEST
-                );
-            }
+            // $paymentOrder = $this->getOrderPaymentById($order->id, $key);
+            // if (!$paymentOrder) {
+            //     DB::rollBack();
+            //     return $this->sendResponse(
+            //         [config('errorCodes.cart.order_not_item')],
+            //         JsonResponse::HTTP_BAD_REQUEST
+            //     );
+            // }
 
-            if (isRunPaymentStripe()) {
-                $session = $this->sendResponse($this->postCheckoutStripe($paymentOrder, $order));
-                DB::commit();
-                return $session;
-            }
+            // if (isRunPaymentStripe()) {
+            //     $session = $this->sendResponse($this->postCheckoutStripe($paymentOrder, $order));
+            //     DB::commit();
+            //     return $session;
+            // }
 
             // run fake when not payment stripe
-            $order->stripe_session_id = 'payment fake run test';
+            // $order->stripe_session_id = 'payment fake run test';
             $order->save();
             $this->cartService->forceDeleteCartItemsByOrderId($key, $order->id);
             $this->orderService->setOrderItemNullCartItem($order->id);
             DB::commit();
             return $this->sendResponse([
-                'url' => getLinkFESuccessPayment()
+                'order_id' => $order->id
             ]);
         } catch (Exception $e) {
             DB::rollBack();

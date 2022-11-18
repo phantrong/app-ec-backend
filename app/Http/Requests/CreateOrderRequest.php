@@ -29,14 +29,7 @@ class CreateOrderRequest extends FormRequest
         $rules = [
             'cart_item_ids' => 'required|array',
             'cart_item_ids.*' => 'integer',
-            'postal_code' => 'required|digits:7',
-            'receiver_name' => 'required|string',
-            'receiver_name_furigana' => 'required|string',
-            'phone_number' => 'required|string|max:11|min:10',
-            'address_01' => 'required|string',
-            'address_02' => 'required|string',
-            'address_03' => 'required|string',
-            'address_04' => 'nullable|string',
+            'address' => 'required|string',
         ];
         if (!auth('sanctum')->check()) {
             $rules['cart_key'] = 'required|string';
