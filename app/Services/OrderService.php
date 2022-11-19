@@ -101,7 +101,7 @@ class OrderService
                     $dataOrder = [
                         'total' => $priceProductOrder,
                         'total_payment' => $priceProductOrder,
-                        'status' => EnumOrder::STATUS_NEW,
+                        'status' => EnumOrder::STATUS_PAID,
                     ];
                 }
 

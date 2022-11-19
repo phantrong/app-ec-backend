@@ -124,13 +124,10 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
         )
             ->with([
                 'order:id,ordered_at',
-                'order.shipping:order_id,receiver_name,receiver_name_furigana,phone_number,' .
-                    'address_01,address_02,address_03,address_04',
-                'orderItems:sub_order_id,product_class_id,price,quantity',
-                'orderItems.productClass:id,product_id',
-                'orderItems.productClass.getProductTypeDeleted:type_name,name',
-                'orderItems.productClass.product:id,name',
-                'orderItems.productClass.product.productMediasImage'
+                'order.shipping:order_id,receiver_name,receiver_name_furigana,phone_number,address',
+                'orderItems:sub_order_id,product_id,price,quantity',
+                'orderItems.product:id,name',
+                'orderItems.product.productMediasImage'
             ])
             ->where("$tbSubOrder.id", $subOrderId)
             ->first();
@@ -222,7 +219,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             ->where("$tableOrder.customer_id", $customerId)
             ->whereNull("$tableOrder.deleted_at")
             ->whereIn("$tableSubOrder.status", EnumSubOrder::STATUS)
-            // ->where("$tableOrder.status", '<>', EnumOrder::STATUS_NEW)
+            ->where("$tableOrder.status", '<>', EnumOrder::STATUS_NEW)
             ->when($status, function ($query) use ($tableSubOrder, $status) {
                 return $query->where("$tableSubOrder.status", $status);
             })
@@ -270,10 +267,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             "$tableShipping.receiver_name",
             "$tableShipping.receiver_name_furigana",
             "$tableShipping.phone_number",
-            "$tableShipping.address_01",
-            "$tableShipping.address_02",
-            "$tableShipping.address_03",
-            "$tableShipping.address_04",
+            "$tableShipping.address",
             "$tableSubOrder.total_payment",
             "$tableOrder.id as order_id",
             "$tableOrder.customer_id",
@@ -287,11 +281,9 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
                 $query->whereIn("$tableSubOrder.status", $subOrderStatusArr);
             })
             ->with([
-                'orderItems:sub_order_id,product_class_id,quantity,price',
-                'orderItems.productClass:id,product_id',
-                'orderItems.productClass.product:id,name',
-                'orderItems.productClass.product.productMediasImage',
-                'orderItems.productClass.getProductTypeDeleted:type_name',
+                'orderItems:sub_order_id,product_id,quantity,price',
+                'orderItems.product:id,name',
+                'orderItems.product.productMediasImage',
                 'order.shipping:id,order_id,email'
             ])
             ->first();

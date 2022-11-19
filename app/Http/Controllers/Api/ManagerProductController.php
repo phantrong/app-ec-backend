@@ -45,21 +45,26 @@ class ManagerProductController extends BaseController
         DB::beginTransaction();
         try {
             $storeId = $request->user()->store_id;
-            $dataProduct = $request->only('name', 'category_id', 'brand_id', 'status', 'description', 'note');
+            $dataProduct = $request->only(
+                'name',
+                'category_id',
+                'brand_id',
+                'status',
+                'description',
+                'price',
+                'discount',
+                'stock'
+            );
             $dataProduct['store_id'] = $storeId;
-            $dataProduct['property'] = $request->property;
             $product = $this->productService->createProduct($dataProduct);
-            $images = $this->uploadService->uploadFile($request->image, EnumFile::IMAGE_PRODUCT, 'products');
-            $this->productMedia->createProductMedia($images, $product);
-            $isConfig = $request->is_config ?? null;
-            if ($isConfig) {
-                $dataProductType = $request->product_type;
-                $this->productTypeConfigService->createProductTypeConfig($product->id, $dataProductType);
-                $this->productClassService->createProductClassHasConfig($request->product_class, $product);
-            } else {
-                $dataProductClass = $request->only('price', 'stock', 'discount');
-                $this->productClassService->createProductClassNotConfig($dataProductClass, $product);
+            //upload image new
+            if ($request->image) {
+                $images = [];
+                foreach ($request->image as $image) {
+                    $images[] = asset($this->uploadService->uploadFileStorage($image));
+                }
             }
+            $this->productMedia->createProductMedia($images, $product);
             DB::commit();
             return $this->sendResponse(null);
         } catch (\Exception $e) {
@@ -99,53 +104,24 @@ class ManagerProductController extends BaseController
                 'brand_id',
                 'status',
                 'description',
-                'note',
-                'property'
+                'price',
+                'discount',
+                'stock'
             );
             if ($dataProduct) {
                 $product = $this->productService->updateProduct($dataProduct, $productId);
             }
-            $isConfig = $this->productService->checkProductHasConfig($productId);
             //delete image
             if ($request->image_delete) {
                 $this->productMedia->deleteProductMedia($request->image_delete);
-                $this->uploadService->deleteListFile($request->image_delete);
-            }
-            if ($request->product_class_delete) {
-                $this->productClassService->deleteProductClass($request->product_class_delete);
-            }
-            if ($request->product_type_delete) {
-                $this->productTypeConfigService->deleteListConfig($request->product_type_delete);
             }
             //upload image new
             if ($request->image) {
-                $images = $this->uploadService->uploadFile($request->image, EnumFile::IMAGE_PRODUCT, 'products');
+                $images = [];
+                foreach ($request->image as $image) {
+                    $images[] = asset($this->uploadService->uploadFileStorage($image));
+                }
                 $this->productMedia->createProductMedia($images, $product);
-            }
-            // if have classify
-            if ($request->is_config) {
-                // if product hasn't classify
-                if (!$isConfig) {
-                    $this->productClassService->deleteProductClassNotConfig($productId);
-                }
-                $dataProductType = $request->product_type;
-                if ($dataProductType) {
-                    $this->productTypeConfigService->updateProductTypeConfig($productId, $dataProductType);
-                }
-                if ($request->product_class) {
-                    $this->productClassService->updateProductClassHasConfig($request->product_class, $product);
-                }
-            } else {
-                $dataProductClass = $request->only('price', 'stock', 'discount');
-                if ($dataProduct) {
-                    if ($isConfig) {
-                        $this->productTypeConfigService->deleteProductTypeConfig($productId);
-                        $this->productClassService->deleteProductClassByProduct($productId);
-                        $this->productClassService->createProductClassNotConfig($dataProductClass, $product);
-                    } else {
-                        $this->productClassService->updateProductClassNotConfig($dataProductClass, $product->id);
-                    }
-                }
             }
             DB::commit();
             return $this->sendResponse(null);
@@ -224,7 +200,7 @@ class ManagerProductController extends BaseController
     {
         try {
             $result = $this->productService->unmarkViolation($id);
-            return $result ? $this->sendResponse() : $this->sendResponse(null, JsonResponse::HTTP_NOT_ACCEPTABLE) ;
+            return $result ? $this->sendResponse() : $this->sendResponse(null, JsonResponse::HTTP_NOT_ACCEPTABLE);
         } catch (\Exception $e) {
             return $this->sendError($e);
         }

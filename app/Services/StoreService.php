@@ -111,4 +111,14 @@ class StoreService
     {
         return $this->storeRepository->findStoreByAccountStripe($accountId);
     }
+
+    public function getListAccountUpgradeCMS($status)
+    {
+        return $this->storeRepository->getListAccountUpgradeCMS($status);
+    }
+
+    public function detailAccountUpgrade($storeId)
+    {
+        return $this->storeRepository->detailAccountUpgrade($storeId);
+    }
 }

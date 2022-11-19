@@ -119,8 +119,6 @@ class ProductService
         $product = $this->productRepository->getInfoProduct($productId);
         if ($product) {
             $product = $product->toArray();
-            $configTypes = $product['product_type_config'];
-            $product['product_type_config'] = $this->convertDataProductType($configTypes);
             return $product;
         }
         return;

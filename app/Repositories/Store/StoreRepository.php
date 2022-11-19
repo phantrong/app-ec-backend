@@ -42,7 +42,6 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
     public function getList($request)
     {
         $tblStore = Store::getTableName();
-        $tblProvince = Province::getTableName();
         $name = $request['name'] ?? null;
         $startDate = $request['start_date'] ?? null;
         $endDate = $request['end_date'] ?? null;
@@ -52,11 +51,10 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
                 "$tblStore.id",
                 "$tblStore.name",
                 "$tblStore.created_at",
-                "$tblStore.phone",
+                "$tblStore.address as address",
+                "$tblStaff.phone as phone",
                 "$tblStaff.email as mail",
             )
-            ->selectRaw("CONCAT($tblProvince.name,' ',city,' ',place,' ',COALESCE($tblStore.address,'')) as address")
-            ->join($tblProvince, "$tblProvince.id", '=', "$tblStore.province_id")
             ->join($tblStaff, "$tblStaff.store_id", '=', "$tblStore.id")
             ->where("$tblStore.status", EnumStore::STATUS_CONFIRMED)
             ->where("$tblStaff.is_owner", EnumStaff::IS_OWNER)
@@ -236,5 +234,49 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
             ->selectRaw('id as storeId')
             ->whereIn('id', $arrayIds)
             ->get();
+    }
+
+    public function getListAccountUpgradeCMS($status, $paginate = true)
+    {
+        $tblStore = Store::getTableName();
+        $tblStaff = Staff::getTableName();
+        $accounts = $this->model
+            ->select(
+                "$tblStore.id as store_id",
+                "$tblStaff.name",
+                "$tblStaff.email",
+                "$tblStaff.phone",
+                "$tblStore.status"
+            )
+            ->join($tblStaff, "$tblStaff.store_id", '=', "$tblStore.id")
+            ->when($status, function ($query) use ($tblStore, $status) {
+                return $query->where("$tblStore.status", $status);
+            })
+            ->orderBy("$tblStore.status")
+            ->orderByDesc("$tblStore.created_at");
+        if ($paginate) {
+            return $accounts->paginate(10);
+        }
+        return $accounts->get();
+    }
+
+    public function detailAccountUpgrade($storeId)
+    {
+        $tblStore = Store::getTableName();
+        $tblStaff = Staff::getTableName();
+        return $this->model
+            ->select(
+                "$tblStore.id as store_id",
+                "$tblStore.name as store_name",
+                "$tblStore.address as store_address",
+                "$tblStore.status",
+                "$tblStore.description",
+                "$tblStaff.email as customer_email",
+                "$tblStaff.phone as customer_phone",
+                "$tblStaff.name as customer_name",
+            )
+            ->join($tblStaff, "$tblStaff.store_id", '=', "$tblStore.id")
+            ->where("$tblStore.id", $storeId)
+            ->first();
     }
 }

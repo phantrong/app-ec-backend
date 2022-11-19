@@ -144,7 +144,7 @@ class AdminController extends BaseController
     public function getListAccountUpgrade(Request $request)
     {
         try {
-            $listRequest = $this->stripeService->getListAccountUpgrade($request->status);
+            $listRequest = $this->storeService->getListAccountUpgradeCMS($request->status);
             return $this->sendResponse($listRequest);
         } catch (\Exception $e) {
             return $this->sendError($e);
@@ -168,7 +168,8 @@ class AdminController extends BaseController
             $storeId = $request->store_id;
             $customer = $this->customerService->getCustomerByEmail($request->email);
             $store = $customer->store;
-            if ($this->stripeService->retrieveStripeByAccountId($store->acc_stripe_id) &&
+            if (
+                $this->stripeService->retrieveStripeByAccountId($store->acc_stripe_id) &&
                 $store->status == EnumStore::STATUS_NEW
             ) {
                 if ($customer && $customer->status_signup_store == EnumCustomer::STATUS_SIGNUP_NEW) {
@@ -205,40 +206,15 @@ class AdminController extends BaseController
     {
         DB::beginTransaction();
         try {
-            $fakePassword = '';
-            $customer = $this->customerService->getCustomerByEmail($request->email);
-            $store = $customer->store;
-            if ($this->stripeService->retrieveStripeByAccountId($store->acc_stripe_id, true) &&
-                $store->status == EnumStore::STATUS_NEW
-            ) {
-                if ($customer && $customer->status_signup_store) {
-                    $fakePassword = Str::random(8);
-                    $customer->status_signup_store = EnumCustomer::STATUS_SIGNUP_NEW;
-                    $customer->password = Hash::make($fakePassword);
-                    $customer->save();
-                }
+            $store = $this->storeService->getStore($request->store_id);
+            if ($store->status == EnumStore::STATUS_NEW) {
                 $code = EnumStore::PREFIX_CODE . $store->id;
-                $this->storeService->updateStore($customer->store_id, [
+                $this->storeService->updateStore($store->id, [
                     'status' => EnumStore::STATUS_CONFIRMED,
                     'commission' => EnumStore::COMMISSION_DEFAULT,
                     'code' => $code,
-                    'date_applicable_commission' => now()->format('Y-m-d H:i:s'),
-                    'date_approved' => now()->format('Y-m-d H:i:s')
                 ]);
-                $this->staffService->createAccountShop($customer);
-                $profileCustomer = $this->customerService->getProfileCustomer($customer->id);
-                if ($profileCustomer->stripe && $profileCustomer->stripe[0]) {
-                    $infoCustomer = [
-                        'name' => $profileCustomer->stripe[0]->surname . $profileCustomer->stripe[0]->name,
-                        'email' => $customer->email
-                    ];
-                } else {
-                    $infoCustomer = [
-                        'name' => '',
-                        'email' => $customer->email
-                    ];
-                }
-                $this->adminService->sendMailApproveAccount($request->email, $infoCustomer, $fakePassword);
+                // $this->adminService->sendMailApproveAccount($request->email, $infoCustomer, $fakePassword);
                 DB::commit();
                 return $this->sendResponse();
             }
@@ -341,7 +317,7 @@ class AdminController extends BaseController
     public function detailAccountUpgrade($stripeId)
     {
         try {
-            $data = $this->stripeService->detailAccountUpgrade($stripeId);
+            $data = $this->storeService->detailAccountUpgrade($stripeId);
             return $this->sendResponse($data);
         } catch (\Exception $e) {
             return $this->sendError($e);
