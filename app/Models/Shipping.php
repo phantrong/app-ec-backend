@@ -18,10 +18,7 @@ class Shipping extends CoreModel
         'postal_code',
         'receiver_name',
         'phone_number',
-        'address_01',
-        'address_02',
-        'address_03',
-        'address_04',
+        'address',
         'receiver_name_furigana'
     ];
 

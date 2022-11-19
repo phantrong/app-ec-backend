@@ -29,9 +29,9 @@ class SubOrder extends CoreModel
         'note'
     ];
 
-    public function productClasses()
+    public function products()
     {
-        return $this->belongsToMany(ProductClass::class, 'dtb_order_items', 'sub_order_id', 'product_class_id');
+        return $this->belongsToMany(Products::class, 'dtb_order_items', 'sub_order_id', 'product_id');
     }
 
     public function orderItems()

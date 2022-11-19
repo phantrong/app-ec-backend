@@ -97,11 +97,6 @@ class SubOrderService
     public function getDetailOrderSiteUser($subOrderId)
     {
         $order = $this->subOrderRepository->getDetailOrderSiteUser($subOrderId)->toArray();
-        foreach ($order['order_items'] as $key => $item) {
-            $item['product_class']['product_type_configs'] = $item['product_class']['get_product_type_deleted'];
-            unset($item['product_class']['get_product_type_deleted']);
-            $order['order_items'][$key] = $item;
-        }
         return $order;
     }
 

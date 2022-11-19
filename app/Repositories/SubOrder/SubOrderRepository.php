@@ -222,7 +222,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             ->where("$tableOrder.customer_id", $customerId)
             ->whereNull("$tableOrder.deleted_at")
             ->whereIn("$tableSubOrder.status", EnumSubOrder::STATUS)
-            ->where("$tableOrder.status", '<>', EnumOrder::STATUS_NEW)
+            // ->where("$tableOrder.status", '<>', EnumOrder::STATUS_NEW)
             ->when($status, function ($query) use ($tableSubOrder, $status) {
                 return $query->where("$tableSubOrder.status", $status);
             })
@@ -233,10 +233,8 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
                 return $query->whereDate("$tableSubOrder.created_at", "<=", $endDate);
             })
             ->with([
-                'orderItems:id,sub_order_id,product_class_id',
-                'orderItems.productClass:id,product_id',
-                'orderItems.productClass.product:id,name',
-                'orderItems.productClass.getProductTypeDeleted:type_name'
+                'orderItems:id,sub_order_id,product_id',
+                'orderItems.product:id,name',
             ])
             ->withSum('orderItems as total_product', 'quantity')
             ->orderBy("$tableSubOrder.status")
@@ -316,11 +314,9 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             ->where("$tableSubOrder.id", $subOrderId)
             ->with([
                 'store:id,name,avatar',
-                'orderItems:sub_order_id,product_class_id,quantity,price',
-                'orderItems.productClass:id,product_id',
-                'orderItems.productClass.product:id,name',
-                'orderItems.productClass.product.productMediasImage',
-                'orderItems.productClass.getProductTypeDeleted:name,type_name',
+                'orderItems:sub_order_id,product_id,quantity,price',
+                'orderItems.product:id,name',
+                'orderItems.product.productMediasImage',
                 'order.shipping'
             ])
             ->first();
