@@ -118,24 +118,19 @@ class StaffService
     public function createStaff(array $input): bool
     {
         // Create new staff
-        $characterSpecial = '!@#$%^&*~`';
-        $numberRand = random_int(0, 9);
-        $password = Str::random(4) . $characterSpecial[$numberRand] . $numberRand . Str::random(4);
-        $input['password'] = $password;
-        $input['store_id'] = Auth::user()->store_id;
         $staff = $this->staffRepository->create($input);
         if (!$staff) {
             return false;
         }
-        $link = config('services.link_service_front_shop') . 'login';
-        // Send mail of creating staff successful
-        $sendMailInput = Arr::only($input, [
-            'email',
-            'name',
-            'password'
-        ]);
-        $sendMailInput['link'] = $link;
-        SendMailCreateStaffSuccess::dispatch($sendMailInput);
+        // $link = config('services.link_service_front_shop') . 'login';
+        // // Send mail of creating staff successful
+        // $sendMailInput = Arr::only($input, [
+        //     'email',
+        //     'name',
+        //     'password'
+        // ]);
+        // $sendMailInput['link'] = $link;
+        // SendMailCreateStaffSuccess::dispatch($sendMailInput);
 
         return true;
     }

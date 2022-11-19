@@ -80,61 +80,31 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
 
     public function getStore($storeId)
     {
-        $tblProvince = Province::getTableName();
         $tblStore = Store::getTableName();
         return $this->model->select(
             "$tblStore.id",
             'status',
             'code',
             "$tblStore.name",
-            DB::raw(
-                "commission * 100 as commission,
-                CONCAT($tblProvince.name,' ',city,' ',place,' ',COALESCE(address,'')) as address_detail
-            "
-            ),
-            'address',
-            'city',
-            'place',
-            'phone',
-            'work_day',
-            'date_start',
-            'time_start',
-            'time_end',
+            "$tblStore.address as address_detail",
+            DB::raw("commission * 100 as commission"),
             'description',
             'avatar',
-            'cover_image',
-            'link',
-            'link_instagram',
-            'postal_code',
-            'company',
-            'fax',
-            'province_id',
-            'acc_stripe_id',
-            'date_approved'
+            'cover_image'
         )
-            ->join($tblProvince, "$tblProvince.id", '=', "$tblStore.province_id")
             ->where("$tblStore.id", $storeId)
-            ->with([
-                'province:id,name,name_kana',
-                'customer:id,store_id,email as mail',
-                'stripe'
-            ])
             ->withCount([
                 'products as total_product',
                 'subOrders as total_order',
-                'livestreams as total_livestream' => function ($query) {
-                    $statusLive = [EnumLiveStream::STATUS_PLAYING, EnumLiveStream::STATUS_END];
-                    return $query->whereIn('status', $statusLive);
-                }
             ])
-            ->withSum(
-                'revenueOrders as revenue_store',
-                'revenue_actual'
-            )
-            ->withSum(
-                'revenueOrders as revenue_total',
-                'revenue'
-            )
+            // ->withSum(
+            //     'revenueOrders as revenue_store',
+            //     'revenue_actual'
+            // )
+            // ->withSum(
+            //     'revenueOrders as revenue_total',
+            //     'revenue'
+            // )
             ->first();
     }
 
@@ -154,11 +124,11 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
         )
             ->where("$tblStore.status", EnumStore::STATUS_CONFIRMED)
             ->when($keyWord, function ($query) use ($keyWord) {
-                return $query->where('dtb_stores.name', 'like', '%'.$keyWord.'%');
+                return $query->where('dtb_stores.name', 'like', '%' . $keyWord . '%');
             });
-            // ->when($provinceId, function ($query) use ($provinceId) {
-            //     return $query->whereIn('dtb_stores.province_id', $provinceId);
-            // })
+        // ->when($provinceId, function ($query) use ($provinceId) {
+        //     return $query->whereIn('dtb_stores.province_id', $provinceId);
+        // })
         if ($paginate) return $query->paginate($perPage);
         return $query->get();
     }

@@ -56,25 +56,17 @@ class StoreController extends BaseController
     {
         DB::beginTransaction();
         try {
-            // update key name of request
-            $stripeArray = $request->stripe;
-            $stripeArray['surname'] = $stripeArray['first_name'];
-            $stripeArray['name'] = $stripeArray['last_name'];
-            $stripeArray['surname_furigana'] = $stripeArray['first_name_furigana'];
-            $stripeArray['name_furigana'] = $stripeArray['last_name_furigana'];
-            unset($stripeArray['first_name']);
-            unset($stripeArray['last_name']);
-            unset($stripeArray['first_name_furigana']);
-            unset($stripeArray['last_name_furigana']);
-            $request->merge(['stripe' =>  $stripeArray]);
             $storeId = $request->user()->store_id;
-            $dataStore = $request->store;
-            $dataStore['work_day'] = implode(',', $request->store['work_day']);
             $store = $this->storeService->getStore($storeId);
+            $dataStore = $request->only(
+                'name',
+                'address',
+                'description',
+            );
             if ($request->has('avatar')) {
                 if ($request->avatar) {
-                    $avatar = $this->uploadService->uploadFile($request->avatar, EnumFile::IMAGE_AVATAR);
-                    $avatar = $avatar[0];
+                    $avatar = $this->uploadService->uploadFileStorage($request->avatar);
+                    $avatar = asset($avatar);
                 } else {
                     $avatar = null;
                 }
@@ -82,49 +74,15 @@ class StoreController extends BaseController
             }
             if ($request->has('cover_image')) {
                 if ($request->cover_image) {
-                    $coverImage = $this->uploadService->uploadFile($request->cover_image, EnumFile::IMAGE_BACK_GROUND);
-                    $coverImage = $coverImage[0];
+                    $coverImage = $this->uploadService->uploadFileStorage($request->cover_image);
+                    $coverImage = asset($coverImage);
                 } else {
                     $coverImage = null;
                 }
                 $dataStore['cover_image'] = $coverImage;
             }
-            $dataStripe = $request->stripe;
-            $addressKana= $request->address_kana;
-            $dataStripe['city_kana'] =  $addressKana['city'];
-            $dataStripe['place_kana'] =  $addressKana['place'];
-            $dataStripe['address_kana'] =  $addressKana['address'] ?? null;
-            if ($request->image_card_first) {
-                $dataStripe['storage_image_card_first'] = $this->uploadService->uploadFileStorage(
-                    $request->image_card_first
-                );
-                $dataStripe['image_card_first'] = $this->uploadService->uploadFile(
-                    $request->image_card_first,
-                    null,
-                    config('filesystems.folder_image_stripe_s3')
-                )[0];
-            }
-            if ($request->image_card_second) {
-                $dataStripe['storage_image_card_second'] = $this->uploadService->uploadFileStorage(
-                    $request->image_card_second
-                );
-                $dataStripe['image_card_second'] = $imageCardSecondS3 = $this->uploadService->uploadFile(
-                    $request->image_card_second,
-                    null,
-                    config('filesystems.folder_image_stripe_s3')
-                )[0];
-            }
             if ($dataStore) {
                 $store->update($dataStore);
-                $dataUpdateStoreMongo = [
-                    'avatar' => $store->avatar,
-                    'name' => $store->name,
-                    'storeId' => $storeId
-                ];
-            }
-            $this->messengerService->updateInfoShop($store->id, $dataUpdateStoreMongo);
-            if ($dataStripe) {
-                $this->stripeService->updateStripe($request->stripe_id, $dataStripe);
             }
             DB::commit();
             return $this->sendResponse();
