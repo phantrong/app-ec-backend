@@ -199,12 +199,6 @@ class CustomerController extends BaseController
     {
         try {
             $user = $request->user();
-            $user = $this->customerService->getProfileCustomer($user->id)->toArray();
-            if ($user['stripe']) {
-                $user['stripe'] = $user['stripe'][0];
-            } else {
-                $user['stripe'] = null;
-            }
             return $this->sendResponse($user);
         } catch (\Exception $e) {
             return $this->sendError($e);
