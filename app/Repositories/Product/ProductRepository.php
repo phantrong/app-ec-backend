@@ -187,7 +187,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                     EnumProduct::DAY_PRODUCT_NEW . " THEN 0 ELSE 1 END as status")
             )
             ->where("$tableProduct.id", $id)
-            ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
+            // ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
             ->with([
                 'category:id,name',
                 'store:id,name',
