@@ -38,7 +38,8 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
             })
             ->withCount([
                 'products as total_product' => function ($query) use ($productIds) {
-                    $query->where('status', EnumProduct::STATUS_PUBLIC)
+                    $query
+                    // ->where('status', EnumProduct::STATUS_PUBLIC)
                         ->when($productIds, function ($query) use ($productIds) {
                             return $query->whereIn('id', $productIds);
                         });
