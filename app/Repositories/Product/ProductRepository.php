@@ -281,7 +281,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->when($storeId !== null, function ($query) use ($tableProduct, $storeId) {
                 return $query->where("$tableProduct.store_id", '=', $storeId);
             })
-            ->orderByDesc("$tableProduct.created_at")
+            ->orderByDesc("$tableProduct.updated_at")
             ->with([
                 'productMedias:product_id,media_path',
                 'store:id,name'

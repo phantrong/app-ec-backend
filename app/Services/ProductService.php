@@ -81,9 +81,9 @@ class ProductService
         if (!$data['category_id']) {
             unset($data['category_id']);
         }
-        if (!$data['brand_id']) {
-            unset($data['brand_id']);
-        }
+        // if (!$data['brand_id']) {
+        //     unset($data['brand_id']);
+        // }
         return $this->productRepository->create($data);
     }
 
