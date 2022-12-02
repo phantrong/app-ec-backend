@@ -48,23 +48,22 @@ class ManagerProductController extends BaseController
             $dataProduct = $request->only(
                 'name',
                 'category_id',
-                'brand_id',
                 'status',
                 'description',
                 'price',
                 'discount',
-                'stock'
             );
             $dataProduct['store_id'] = $storeId;
+            $dataProduct['stock'] = 10000;
             $product = $this->productService->createProduct($dataProduct);
             //upload image new
-            if ($request->image) {
+            if ($request->product_medias) {
                 $images = [];
-                foreach ($request->image as $image) {
-                    $images[] = asset($this->uploadService->uploadFileStorage($image));
+                foreach ($request->product_medias as $image) {
+                    $images[] = $image;
                 }
+                $this->productMedia->createProductMedia($images, $product);
             }
-            $this->productMedia->createProductMedia($images, $product);
             DB::commit();
             return $this->sendResponse(null);
         } catch (\Exception $e) {
@@ -106,7 +105,6 @@ class ManagerProductController extends BaseController
                 'description',
                 'price',
                 'discount',
-                'stock'
             );
             if ($dataProduct) {
                 $product = $this->productService->updateProduct($dataProduct, $productId);
@@ -116,10 +114,10 @@ class ManagerProductController extends BaseController
                 $this->productMedia->deleteProductMedia($request->image_delete);
             }
             //upload image new
-            if ($request->image) {
+            if ($request->product_medias) {
                 $images = [];
-                foreach ($request->image as $image) {
-                    $images[] = asset($this->uploadService->uploadFileStorage($image));
+                foreach ($request->product_medias as $image) {
+                    $images[] = $image;
                 }
                 $this->productMedia->createProductMedia($images, $product);
             }

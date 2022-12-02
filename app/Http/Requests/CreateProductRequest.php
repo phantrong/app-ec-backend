@@ -31,30 +31,27 @@ class CreateProductRequest extends FormRequest
         $rules = [
             'name' => 'required|max:100|unique:dtb_products,name,NULL,id,store_id,' . $storeId . ',deleted_at,NULL',
             'category_id' => 'required|exists:mtb_categories,id',
-            'brand_id' => 'required|exists:mtb_brands,id',
             'price' => 'required|numeric|min:' . config('database.product_min_price') .
                 '|max:' . config('database.product_max_price'),
             'discount' => 'required|numeric|min:' . config('database.product_min_price') .
                 '|max:' . config('database.product_max_price'),
-            'stock' => 'required|numeric|max:' . config('database.product_max_stock'),
-            'image' => 'required',
-            'image.*' => 'required|mimes:' . config('filesystems.image_extension') .
-                "|max:" . config('filesystems.product_image_size'),
+            // 'stock' => 'required|numeric|max:' . config('database.product_max_stock'),
+            'product_medias' => 'required',
             'description' => 'required',
-            'status' => 'required|in:' . EnumProduct::STATUS_PUBLIC . ',' . EnumProduct::STATUS_NO_PUBLIC
+            // 'status' => 'required|in:' . EnumProduct::STATUS_PUBLIC . ',' . EnumProduct::STATUS_NO_PUBLIC
         ];
         if ($this->id) {
             return [
                 'name' => "required|max:100|unique:dtb_products,name,$this->id,id,store_id,$storeId,deleted_at,NULL",
                 'category_id' => 'required|exists:mtb_categories,id',
-                'brand_id' => 'required|exists:mtb_brands,id',
                 'price' => 'required|numeric|min:' . config('database.product_min_price') .
                     '|max:' . config('database.product_max_price'),
                 'discount' => 'required|numeric|min:' . config('database.product_min_price') .
                     '|max:' . config('database.product_max_price'),
-                'stock' => 'required|numeric|max:' . config('database.product_max_stock'),
+                'product_medias' => 'required',
+                // 'stock' => 'required|numeric|max:' . config('database.product_max_stock'),
                 'description' => 'required',
-                'status' => 'required|in:' . EnumProduct::STATUS_PUBLIC . ',' . EnumProduct::STATUS_NO_PUBLIC
+                // 'status' => 'required|in:' . EnumProduct::STATUS_PUBLIC . ',' . EnumProduct::STATUS_NO_PUBLIC
             ];
         }
         return $rules;

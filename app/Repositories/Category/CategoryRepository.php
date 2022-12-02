@@ -23,7 +23,7 @@ class CategoryRepository extends BaseRepository implements CategoryRepositoryInt
     {
         $perPage = $request['per_page'] ?? self::PERPAGE_HOME;
         return $this->model->select('id', 'name', 'image_path')
-            ->paginate($perPage);
+            ->get();
     }
 
     public function getCategoryProductCount($productIds, $categoryIds = []): mixed

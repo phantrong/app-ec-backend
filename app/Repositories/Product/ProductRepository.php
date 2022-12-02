@@ -78,7 +78,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             "$tableProduct.discount",
             "$tableProduct.created_at",
             "$tableProduct.category_id",
-            "$tableProduct.brand_id",
+            "$tableProduct.store_id",
             DB::raw("CASE WHEN DATEDIFF(now(), DATE($tableProduct.created_at)) > " .
                 EnumProduct::DAY_PRODUCT_NEW . " THEN 0 ELSE 1 END as status")
         )
@@ -122,7 +122,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                     ->where("$tableProductFavorite.customer_id", $customerId);
             })
             ->with([
-                'brand:id,name',
+                'store:id,name',
+                'category:id,name',
                 'productMediasImage:product_id,media_path,media_type'
             ])
             ->withCount([
@@ -179,7 +180,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 "$tableProduct.status",
                 "$tableProduct.store_id",
                 "$tableProduct.description",
-                "$tableProduct.brand_id",
+                "$tableProduct.category_id",
                 "$tableProduct.price",
                 "$tableProduct.discount",
                 DB::raw("CASE WHEN DATEDIFF(now(), DATE($tableProduct.created_at)) > " .
@@ -188,7 +189,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
             ->where("$tableProduct.id", $id)
             ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
             ->with([
-                'brand:id,name',
+                'category:id,name',
+                'store:id,name',
                 'productMedias',
             ])
             ->with(['productFavorites' => function ($query) use ($customerId) {
@@ -228,20 +230,15 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function getInfoProduct($productId)
     {
         $tableProduct = Products::getTableName();
-        $tableCategory = Category::getTableName();
-        $tableBrand = Brand::getTableName();
         return $this->model->select(
             "$tableProduct.id",
             "$tableProduct.name",
             "$tableProduct.status",
+            "$tableProduct.price",
+            "$tableProduct.discount",
             'description',
             "$tableProduct.category_id",
-            "$tableBrand.name as brand_name",
-            "$tableCategory.name as category_name",
-            'brand_id',
         )
-            ->join($tableCategory, "$tableCategory.id", '=', "$tableProduct.category_id")
-            ->join($tableBrand, "$tableBrand.id", '=', "$tableProduct.brand_id")
             ->with([
                 'productMedias:id,product_id,media_type,media_path',
             ])

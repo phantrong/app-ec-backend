@@ -19,8 +19,8 @@ class UploadController extends BaseController
     public function uploadSingleFile(UploadFileRequest $request)
     {
         try {
-            $links = $this->uploadService->uploadSingleFile($request->image);
-            return $this->sendResponse($links);
+            $links = $this->uploadService->uploadFileStorage($request->image);
+            return $this->sendResponse(asset($links));
         } catch (\Exception $e) {
             return $this->sendError($e);
         }

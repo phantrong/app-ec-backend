@@ -21,7 +21,6 @@ class Products extends CoreModel
         'store_id',
         'status',
         'description',
-        'brand_id',
         'category_id',
         'price',
         'discount',
