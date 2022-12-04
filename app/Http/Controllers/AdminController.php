@@ -214,7 +214,11 @@ class AdminController extends BaseController
                     'commission' => EnumStore::COMMISSION_DEFAULT,
                     'code' => $code,
                 ]);
-                // $this->adminService->sendMailApproveAccount($request->email, $infoCustomer, $fakePassword);
+                $info = [
+                    'name_customer' => $store->owner->name,
+                    'name_shop' => $store->name,
+                ];
+                $this->adminService->sendMailApproveAccount($store->owner->email, $info);
                 DB::commit();
                 return $this->sendResponse();
             }

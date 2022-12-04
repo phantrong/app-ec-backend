@@ -126,7 +126,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
                 'order:id,ordered_at',
                 'order.shipping:order_id,receiver_name,receiver_name_furigana,phone_number,address',
                 'orderItems:sub_order_id,product_id,price,quantity',
-                'orderItems.product:id,name',
+                'orderItems.product:id,name,price',
                 'orderItems.product.productMediasImage'
             ])
             ->where("$tbSubOrder.id", $subOrderId)

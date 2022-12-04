@@ -15,23 +15,17 @@ class SendMailApproveAccount implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private string $email;
-    private array $customer;
-    private string $template;
-    private string $linkSignUp;
-    private string $fakePassword;
+    private array $info;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($email, $customer, $template, $linkSignUp = '', $fakePassword = '')
+    public function __construct($email, $info)
     {
         $this->email = $email;
-        $this->customer = $customer;
-        $this->template = $template;
-        $this->linkSignUp = $linkSignUp;
-        $this->fakePassword = $fakePassword;
+        $this->info = $info;
     }
 
     /**
@@ -42,10 +36,7 @@ class SendMailApproveAccount implements ShouldQueue
     public function handle()
     {
         Mail::to($this->email)->send(new SendMailConfirmAccount(
-            $this->customer,
-            $this->template,
-            $this->linkSignUp,
-            $this->fakePassword
+            $this->info
         ));
     }
 }

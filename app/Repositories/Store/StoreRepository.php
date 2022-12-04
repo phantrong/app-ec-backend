@@ -95,6 +95,7 @@ class StoreRepository extends BaseRepository implements StoreRepositoryInterface
                 'products as total_product',
                 'subOrders as total_order',
             ])
+            ->with(['owner:id,store_id,email,name'])
             // ->withSum(
             //     'revenueOrders as revenue_store',
             //     'revenue_actual'

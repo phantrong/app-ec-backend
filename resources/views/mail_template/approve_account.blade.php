@@ -1,35 +1,10 @@
-<p><b>{{ $customer['name'] }}様</b></p>
+<p><b>Kính gửi: {{ $info['name_customer'] }}</b></p>
 <p>
-    いつもFESLIAISON運営事務局をご利用いただきありがとうございます。
-    ご送付いただきました出店申込につきまして、
-    FESLIAISON運営事務局より承認されましたので、ご案内致します。
+    Cảm ơn bạn đã luôn sử dụng hệ thống MY CART. 
+    Chúng tôi xin thông báo rằng đơn xin mở cửa hàng <b>{{ $info['name_shop'] }}</b> của bạn đã được chúng tôi chấp thuận.
+    Giờ bạn có thể đăng nhập vào trang cửu hàng và tạo sản phẩm mà bạn muốn!
 </p>
 <hr>
-@if (isset($fakePassword) && $fakePassword)
 <p>
-    仮パスワードが再発行されました。下記URLからログインし、新しいパスワードを設定してください。
-</p>
-<p>
-    仮パスワード ：{{ $fakePassword }}
-</p>
-<p>
-    ログイン画面へ ：<a href="{{config('services.link_service_front_shop') . 'login'}}">
-        <b>{{config('services.link_service_front_shop') . 'login'}}</b>
-    </a>
-</p>
-@else
-<p>
-    購入者専用ページのパスワードは、店舗管理画面にログインする際にも必要となります。 必ず忘れないよう、保管をお願いいたします。
-    お客様のご利用を心よりお待ちしております。
-</p>
-<p>
-    ログイン画面へ
-    <a href="{{config('services.link_service_front_shop') . 'login'}}">
-        <b>{{config('services.link_service_front_shop') . 'login'}}</b>
-    </a>
-</p>
-@endif
-<hr>
-<p>
-    ※当メールは送信専用メールアドレスから配信されております。 このままご返信いただいてもお答えできませんのでご了承下さい。
+    *Email này được gửi từ một địa chỉ email chỉ gửi. Xin lưu ý rằng chúng tôi sẽ không thể trả lời ngay cả khi bạn trả lời.
 </p>

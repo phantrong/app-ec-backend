@@ -10,22 +10,16 @@ class SendMailConfirmAccount extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private array $customer;
-    private string $template;
-    private string $linkSignUp;
-    private string $fakePassword;
+    private array $info;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($customer, $template, $linkSignUp = '', $fakePassword = '')
+    public function __construct($info)
     {
-        $this->customer = $customer;
-        $this->template = $template;
-        $this->linkSignUp = $linkSignUp;
-        $this->fakePassword = $fakePassword;
+        $this->info = $info;
     }
 
     /**
@@ -35,21 +29,10 @@ class SendMailConfirmAccount extends Mailable
      */
     public function build()
     {
-        if ($this->template == 'mail_template.approve_account') {
-            return $this->subject('店舗を登録する承認メール')
-                ->from(config('mail.from.address'), config('mail.from.name'))
-                ->view($this->template, [
-                    'customer' => $this->customer,
-                    'linkSignUp' => $this->linkSignUp,
-                    'fakePassword' => $this->fakePassword,
-                ]);
-        }
-        return $this->subject('店舗を登録する断るメール')
+        return $this->subject('Thư gửi từ hệ thống MY CART')
             ->from(config('mail.from.address'), config('mail.from.name'))
-            ->view($this->template, [
-                'customer' => $this->customer,
-                'linkSignUp' => $this->linkSignUp,
-                'fakePassword' => $this->fakePassword,
+            ->view('mail_template.approve_account', [
+                'info' => $this->info
             ]);
     }
 }

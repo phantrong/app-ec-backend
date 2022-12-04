@@ -96,9 +96,9 @@ class AdminService
         return $this->adminRepository->updateByEmail($email, $data);
     }
 
-    public function sendMailApproveAccount($email, $customer, $fakePassword = '')
+    public function sendMailApproveAccount($email, $info)
     {
-        SendMailApproveAccount::dispatch($email, $customer, 'mail_template.approve_account', '', $fakePassword);
+        SendMailApproveAccount::dispatch($email, $info);
     }
 
     public function sendMailCancelAccount($email, $customer, $isSignUpStore = false)
