@@ -96,7 +96,8 @@ class SubOrderService
 
     public function getDetailOrderSiteUser($subOrderId)
     {
-        $order = $this->subOrderRepository->getDetailOrderSiteUser($subOrderId)->toArray();
+        $order = $this->subOrderRepository->getDetailOrderSiteUser($subOrderId);
+        if ($order) return $order->toArray();
         return $order;
     }
 

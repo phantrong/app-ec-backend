@@ -84,7 +84,7 @@ class OrderService
                     } else {
                         $dataStores[$product->store_id] = [
                             'store_id' => $product->store->id,
-                            'commission' => $product->store->commission ?? 0,
+                            'commission' => @$product->store->commission ?? 0,
                             'total' => $priceProductOrder,
                             'total_payment' => $priceProductOrder,
                             'verified_at' => $now,
@@ -231,7 +231,7 @@ class OrderService
             foreach ($orders as $order) {
                 $dataStore = [];
                 $dataStore['destination'] = $order->store->acc_stripe_id;
-                $dataStore['commission'] = $order->commission ?? 0;
+                $dataStore['commission'] = @$order->commission ?? 0;
                 $dataStore['amount'] = 0;
 
                 if ($dataStore['destination']) {

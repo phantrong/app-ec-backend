@@ -204,7 +204,7 @@ class StoreController extends BaseController
             $startDate = $request->start_date;
             $endDate = $request->end_date;
             $data = $this->subOrderService->getRevenue($startDate, $endDate, $store->id) ?: [];
-            $data['commission'] = $store->commission;
+            $data['commission'] = @$store->commission ?? 0;
             $data['date_applicable_commission'] = $store->date_applicable_commission;
             return $this->sendResponse($data);
         } catch (\Exception $e) {
