@@ -76,10 +76,14 @@ class AuthController extends BaseController
         try {
             $staff = $this->staffService->getStaffByEmail($request->email);
             if (!$staff || !Hash::check($request->password, $staff->password)) {
-                return $this->sendResponse(null, JsonResponse::HTTP_UNAUTHORIZED);
+                return $this->sendResponse([
+                    'message' => "Thông tin tài khoản mật khẩu không chính xác."
+                ], JsonResponse::HTTP_UNAUTHORIZED);
             }
             if ($staff->store->status != EnumStore::STATUS_CONFIRMED || $staff->status == EnumStaff::STATUS_BLOCKED) {
-                return $this->sendResponse(null, JsonResponse::HTTP_FORBIDDEN);
+                return $this->sendResponse([
+                    'message' => "Tài khoản này chưa có quyền đăng nhập."
+                ], JsonResponse::HTTP_FORBIDDEN);
             }
             $tokenStaff = $staff->createToken('authToken', [config('auth.token_staff')])->plainTextToken;
             $data = [

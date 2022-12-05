@@ -29,11 +29,7 @@ class UpdateShopRequest extends FormRequest
         return [
             'name' => 'required|max:80',
             'address' => 'max:80',
-            'description' => 'max:200',
-            'avatar' => 'nullable|mimes:' . config('filesystems.image_extension') .
-                "|max:" . config('filesystems.avatar_size'),
-            'cover_image' => 'nullable|mimes:' . config('filesystems.image_extension') .
-                "|max:" . config('filesystems.avatar_size'),
+            'description' => 'max:200'
         ];
     }
 }

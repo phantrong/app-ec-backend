@@ -118,7 +118,9 @@ class CustomerController extends BaseController
             $result = $this->customerService->login($request->only('email', 'password'));
             $status = $result['status'];
             if ($status != JsonResponse::HTTP_OK) {
-                return $this->sendResponse(null, $status, 'false');
+                return $this->sendResponse([
+                    'message' => 'Thông tin tài khoản mật khẩu không chính xác.'
+                ], $status, 'false');
             }
             return $this->sendResponse([
                 'token_type' => 'Bearer',

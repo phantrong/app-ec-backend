@@ -19,6 +19,10 @@ class BaseController extends Controller
             'message' => $this->getMessage($statusCode)
         ];
 
+        if (isset($result['message'])) {
+            $response['message'] = $result['message'];
+        }
+
         if ($result !== null) {
             if ($statusCode === JsonResponse::HTTP_OK) {
                 $response['data'] = $result;

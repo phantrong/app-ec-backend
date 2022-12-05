@@ -62,25 +62,9 @@ class StoreController extends BaseController
                 'name',
                 'address',
                 'description',
+                'avatar',
+                'cover_image'
             );
-            if ($request->has('avatar')) {
-                if ($request->avatar) {
-                    $avatar = $this->uploadService->uploadFileStorage($request->avatar);
-                    $avatar = asset($avatar);
-                } else {
-                    $avatar = null;
-                }
-                $dataStore['avatar'] = $avatar;
-            }
-            if ($request->has('cover_image')) {
-                if ($request->cover_image) {
-                    $coverImage = $this->uploadService->uploadFileStorage($request->cover_image);
-                    $coverImage = asset($coverImage);
-                } else {
-                    $coverImage = null;
-                }
-                $dataStore['cover_image'] = $coverImage;
-            }
             if ($dataStore) {
                 $store->update($dataStore);
             }

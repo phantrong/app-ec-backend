@@ -36,7 +36,7 @@ class ResetPasswordRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'success' => false,
-            'message' => 'Validation errors',
+            'message' => 'Các giá trị nhập chưa hợp lệ. Vui lòng nhập lại.',
             'data' => $validator->failed()
         ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
