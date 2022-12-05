@@ -182,12 +182,12 @@ class OrderService
     {
         $dataShip = $request->only([
             'address',
+            'receiver_name',
+            'phone_number',
         ]);
         $customer = auth('sanctum')->user() ?? null;
         if ($customer) {
             $dataShip['email'] = $customer->email;
-            $dataShip['receiver_name'] = $customer->name;
-            $dataShip['phone_number'] = $customer->phone;
         }
         $dataShip['order_id'] = $orderId;
 
