@@ -104,7 +104,7 @@ class BaseController extends Controller
             "success" => false,
             // "file" => $e->getFile(),
             // "line" => $e->getLine(),
-            "messages" => 'System error',
+            "messages" => 'Lỗi hệ thống',
             // 'error' => $e->getMessage()
         ];
         return response()->json($response, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);

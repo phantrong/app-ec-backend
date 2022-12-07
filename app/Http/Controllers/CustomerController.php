@@ -92,7 +92,9 @@ class CustomerController extends BaseController
             );
             $this->customerService->store($dataCustomer);
             DB::commit();
-            return $this->sendResponse();
+            return $this->sendResponse([
+                'message' => "Chúc mừng bạn đã đăng kí thàng công. Hãy đăng nhập để sử dụng hệ thống."
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendError($e);
