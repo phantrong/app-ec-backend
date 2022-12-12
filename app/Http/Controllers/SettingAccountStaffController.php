@@ -55,10 +55,10 @@ class SettingAccountStaffController extends BaseController
                 $errorCode = config('errorCodes.password.not_valid');
             }
             return $errorCode == "false" ? $this->sendResponse([
-                'messages' => 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại.'
+                'message' => 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại.'
             ]) :
                 $this->sendResponse([
-                    'messages' => 'Mật khẩu hiện tại không chính xác.'
+                    'message' => 'Mật khẩu hiện tại không chính xác.'
                 ], JsonResponse::HTTP_NOT_ACCEPTABLE);
         } catch (\Exception $e) {
             DB::rollBack();

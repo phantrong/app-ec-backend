@@ -214,27 +214,11 @@ class CustomerController extends BaseController
         DB::beginTransaction();
         try {
             $customer = Auth::user();
-            $avatar = $customer->avatar;
-            if ($request->has('avatar')) {
-                if ($request->avatar) {
-                    $avatar = $this->uploadService->uploadFile($request->avatar, EnumFile::IMAGE_AVATAR, 'profile');
-                    $avatar = $avatar[0];
-                } else {
-                    $avatar = null;
-                }
-            }
             $customerId = $customer->id;
             $data = $request->except('avatar');
-            $data['avatar'] = $avatar;
-            $dataMongo = [
-                'avatar' => $avatar,
-                'name' => $request->surname . $request->name,
-                'userId' => $customerId,
-            ];
-            $this->messengerService->updateInfoUser($customerId, $dataMongo);
             $this->customerService->updateCustomer($customerId, $data);
             DB::commit();
-            return $this->sendResponse(null);
+            return $this->sendResponse(['message' => "Cập nhật thông tin thành công."]);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendError($e);
@@ -385,13 +369,16 @@ class CustomerController extends BaseController
             if (Hash::check($request->old_password, $customer->password)) {
                 $dataUpdate = ['password' => Hash::make($request->password)];
                 $this->customerService->updateCustomer($customer->id, $dataUpdate);
-                $this->staffService->synchronizeInfoStaff($customer->email, $dataUpdate);
                 $customer->currentAccessToken()->delete();
             } else {
                 $errorCode = config('errorCodes.password.not_valid');
             }
-            $status = $errorCode == "false" ? JsonResponse::HTTP_OK : JsonResponse::HTTP_NOT_ACCEPTABLE;
-            return $this->sendResponse([$errorCode], $status);
+            return $errorCode == "false" ? $this->sendResponse([
+                'message' => 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại.'
+            ]) :
+                $this->sendResponse([
+                    'message' => 'Mật khẩu hiện tại không chính xác.'
+                ], JsonResponse::HTTP_NOT_ACCEPTABLE);
         } catch (\Exception $e) {
             return $this->sendError($e);
         }
@@ -588,17 +575,19 @@ class CustomerController extends BaseController
     {
         DB::beginTransaction();
         try {
-            $subOrder = $this->subOrderService->getDetailOrder($orderId);
+            $subOrder = $this->subOrderService->getDetailOrderSiteUser($orderId);
             $result = $this->subOrderService->confirmOrder($orderId);
-            $this->orderService->updateSuccessOrder($subOrder->order_id);
+            $this->orderService->updateSuccessOrder($subOrder['order_id']);
             if ($result) {
-                $customer = Auth::user();
-                if ($customer->send_mail) {
-                    JobSendMailReceiveOrder::dispatch($customer->email, $subOrder->toArray());
-                }
+                // $customer = Auth::user();
+                // if ($customer->send_mail) {
+                //     JobSendMailReceiveOrder::dispatch($customer->email, $subOrder->toArray());
+                // }
             }
             DB::commit();
-            return $this->sendResponse();
+            return $this->sendResponse([
+                'message' => 'Cập nhật trạng thái đơn hàng thành công.'
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendError($e);

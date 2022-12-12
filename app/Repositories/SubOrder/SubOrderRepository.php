@@ -45,7 +45,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             $tbSubOrder.code,
             $tbSubOrder.total_payment,
             $tbSubOrder.status,
-            date($tbOrder.ordered_at) as ordered_at,
+            $tbOrder.ordered_at as ordered_at,
             $tbShipping.receiver_name"
         )
             ->join($tbShipping, "$tbShipping.order_id", "$tbSubOrder.order_id")
@@ -119,6 +119,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             "$tbSubOrder.discount",
             "$tbSubOrder.total_payment",
             "$tbSubOrder.note",
+            "$tbSubOrder.completed_at",
             "$tbSubOrder.code",
             "$tbSubOrder.status",
         )
@@ -211,9 +212,11 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             "$tableSubOrder.id",
             "$tableSubOrder.code",
             "$tableSubOrder.status",
+            "$tableSubOrder.store_id",
             "$tableSubOrder.total",
             "$tableSubOrder.discount",
-            "$tableSubOrder.created_at"
+            "$tableSubOrder.created_at",
+            "$tableOrder.ordered_at",
         )
             ->join($tableOrder, "$tableOrder.id", '=', "$tableSubOrder.order_id")
             ->where("$tableOrder.customer_id", $customerId)
@@ -230,6 +233,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
                 return $query->whereDate("$tableSubOrder.created_at", "<=", $endDate);
             })
             ->with([
+                'store:id,name,avatar',
                 'orderItems:id,sub_order_id,product_id',
                 'orderItems.product:id,name',
             ])
@@ -261,6 +265,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             "$tableSubOrder.code",
             "$tableSubOrder.status",
             "$tableSubOrder.order_id",
+            "$tableSubOrder.ordered_at",
             "$tableStore.avatar",
             "$tableStore.id as store_id",
             "$tableStore.name as store_name",
@@ -301,6 +306,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             'code',
             'total',
             'discount',
+            'completed_at',
             'total_payment'
         )
             ->where("$tableSubOrder.id", $subOrderId)

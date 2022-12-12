@@ -27,17 +27,11 @@ class UpdateProfileRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|max:8',
-            'name_furigana' => 'required|max:8',
-            'surname' => 'required|max:8',
-            'surname_furigana' => 'required|max:8',
+            'name' => 'required|max:255',
             'gender' => 'required',
-            'birthday' => 'required|before:today',
+            'birthday' => 'required|date_format:Y-m-d|before:today',
+            'phone' => 'required|between:10,11'
         ];
-        if ($this->avatar) {
-            $rules['avatar'] = 'nullable|mimes:' . config('filesystems.image_extension') .
-                "|max:" . config('filesystems.avatar_size');
-        }
         return $rules;
     }
 
