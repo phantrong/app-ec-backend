@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\EnumProduct;
+use App\Traits\FullTextSearch;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,9 +11,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Products extends CoreModel
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, FullTextSearch;
 
     protected $table = 'dtb_products';
+
+    protected $searchable = [
+        'dtb_products.name'
+    ];
 
     protected $hidden = ['pivot'];
 

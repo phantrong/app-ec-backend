@@ -84,8 +84,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         )
             ->join($tableStore, "$tableStore.id", '=', "$tableProduct.store_id")
             // ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
-            ->when($keyWord, function ($query) use ($keyWord, $tableProduct) {
-                return $query->where("$tableProduct.name", 'like', '%' . $keyWord . '%');
+            ->when($keyWord, function ($query) use ($keyWord) {
+                return $query->search($keyWord);
             })
             ->when($productId, function ($query) use ($productId, $tableProduct) {
                 return $query->whereIn("$tableProduct.id", $productId);
