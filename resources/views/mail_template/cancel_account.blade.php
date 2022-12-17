@@ -1,21 +1,10 @@
-<p><b>{{ $customer['name'] }}様</b></p>
+<p>Xin chào <b>{{ $info['name_customer'] }}</b>,</p>
 <p>
-  いつもFESLIAISON運営事務局をご利用いただきありがとうございます。
-  ご送付いただきました出店申込につきまして、
-  当社ガイドラインに基づき検討いたしましたが
-  誠に残念ながら承認を見送らせていただく結果となりました。
-  お申し込みの意に添いかねることとなりましたが、何卒ご了解賜りますようお願い申し上げます。
-</p>
-@if (isset($linkSignUp) && $linkSignUp)
-<hr>
-<p>
-  以下のリンクから改めまして店舗お申込みの程よろしくお願い致します
-</p>
-<p>
-  ・リンクは<a href="{{$linkSignUp}}"><b>こちら</b></a>です。
+    Cảm ơn bạn đã luôn sử dụng hệ thống MY CART. 
+    Chúng tôi xin thông báo rằng đơn xin mở cửa hàng <b>{{ $info['name_shop'] }}</b> của bạn không được chúng tôi chấp thuận.
+    Vui lòng đăng kí lại và điền đầy đủ và đúng thông tin. Xin cảm ơn!
 </p>
 <hr>
-@endif
 <p>
-  ※当メールは送信専用メールアドレスから配信されております。 このままご返信いただいてもお答えできませんのでご了承下さい。
+    *Email này được gửi từ một địa chỉ email chỉ gửi. Xin lưu ý rằng chúng tôi sẽ không thể trả lời ngay cả khi bạn trả lời.
 </p>

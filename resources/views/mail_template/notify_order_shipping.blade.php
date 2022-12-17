@@ -1,38 +1,29 @@
-<p>{{$order['receiver_name'] . '様'}}</p>
+<p>Xin chào <b>{{$order['receiver_name']}}</b></p>
 <p>
-    FESLIAISON運営事務局です。<br>
-    ご注文いただきました商品を本日発送いたしました。<br> <br>
-    今回のご注文商品は下記の通りです。
+    Cảm ơn bạn đã luôn sử dụng hệ thống MY CART. <br>
+    Đơn hàng mã {{ $order['order_code'] }} của bạn đã bắt đầu được vận chuyển. Hãy để ý điện thoại của bạn để nhận hàng.<br> <br>
 </p>
-—————-【注文情報】—————–
-<p>●商品番号:</p>
--------------------------------------------------------------------
+—————-【Thông tin đơn hàng】—————–
 <p>
-    配送情報 <br>
-    お届け先：{{$order['address_01'] . $order['address_02'] . $order['address_03'] . $order['address_04']}} <br>
-    送り主：{{$order['receiver_name']}}
+    Địa chỉ nhận hàng: {{$order['address']}} <br>
+    Tên người nhận: {{$order['receiver_name']}}
 </p>
 -------------------------------------------------------------------
 <p>
-    注文管理名 ： {{$order['store_name']}} <br>
-    商品名:
-@foreach($order['order_items'] as $item)
+    Tên cửa hàng: {{$order['store_name']}} <br>
+    Các sản phẩm:
+    @foreach($order['order_items'] as $item)
     <p>
-        {{$item['product_class']['product']['name']}}
-        {{$item['product_class']['get_product_type_deleted'][0]['type_name'] ?? ''}}
-        {{$item['product_class']['get_product_type_deleted'][1]['type_name'] ?? ''}}
+        {{$item['product']['name']}}
     </p>
     @endforeach
     </p>
     -------------------------------------------------------------------
-    <p>税込金額：{{$order['total_payment']}} 円</p>
+    <p>Tổng tiền thanh toán: {{number_format(ceil($order['total_payment']))}} VNĐ</p>
     <p>
-        ※天候・交通状況により、入荷が遅れ発送日が変更となる場合ございます。
-        予めご了承頂きますようお願い致します。<br>
-
-        商品到着まで今しばらくお待ちくださいませ。
-        ご不明点などございましたら、お気軽にご連絡ください。<br>
-
-        よろしくお願いします。
+        ※Ngày giao hàng có thể thay đổi do điều kiện thời tiết và giao thông.<br>
+        Vui lòng đợi một lúc cho đến khi sản phẩm đến.
+        Nếu bạn có bất kỳ câu hỏi nào, xin vui lòng liên hệ với chúng tôi.<br>
+        Cảm ơn bạn rất nhiều.
     </p>
-
+</p>

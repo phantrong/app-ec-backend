@@ -1,4 +1,4 @@
-<p><b>Kính gửi: {{ $info['name_customer'] }}</b></p>
+<p>Xin chào <b>{{ $info['name_customer'] }}</b>,</p>
 <p>
     Cảm ơn bạn đã luôn sử dụng hệ thống MY CART. 
     Chúng tôi xin thông báo rằng đơn xin mở cửa hàng <b>{{ $info['name_shop'] }}</b> của bạn đã được chúng tôi chấp thuận.

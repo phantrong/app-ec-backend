@@ -27,7 +27,7 @@ class SendMailOrderShipping extends Mailable
      */
     public function build()
     {
-        return $this->subject('商品発送のお知らせ')
+        return $this->subject('Thư gửi từ hệ thống MY CART')
             ->from(config('mail.from.address'), config('mail.from.name'))
             ->view('mail_template.notify_order_shipping', [
                 'order' => $this->order

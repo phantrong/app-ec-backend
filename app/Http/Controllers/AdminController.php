@@ -30,6 +30,7 @@ class AdminController extends BaseController
     private CustomerService $customerService;
     private StaffService $staffService;
     private ManagerRevenueService $ManagerRevenueService;
+    private AdminService $adminService;
 
     public function __construct(
         StripeService $stripeService,
@@ -165,37 +166,21 @@ class AdminController extends BaseController
     {
         DB::beginTransaction();
         try {
-            $storeId = $request->store_id;
-            $customer = $this->customerService->getCustomerByEmail($request->email);
-            $store = $customer->store;
-            if (
-                $this->stripeService->retrieveStripeByAccountId($store->acc_stripe_id) &&
-                $store->status == EnumStore::STATUS_NEW
-            ) {
-                if ($customer && $customer->status_signup_store == EnumCustomer::STATUS_SIGNUP_NEW) {
-                    $customer->status_signup_store = EnumCustomer::STATUS_SIGNUP_FAILED;
-                    $customer->save();
-                }
-                $this->stripeService->deleteAccount($storeId);
-                $profileCustomer = $this->customerService->getProfileCustomer($customer->id);
-                if ($profileCustomer->stripe && $profileCustomer->stripe[0]) {
-                    $infoCustomer = [
-                        'name' => $profileCustomer->stripe[0]->surname . $profileCustomer->stripe[0]->name,
-                    ];
-                } else {
-                    $infoCustomer = [
-                        'name' => '',
-                    ];
-                }
-                $this->adminService->sendMailCancelAccount(
-                    $request->email,
-                    $infoCustomer,
-                    $customer && $customer->status_signup_store
-                );
+            $store = $this->storeService->getStore($request->store_id);
+            if ($store->status == EnumStore::STATUS_NEW) {
+                $this->storeService->updateStore($store->id, [
+                    'status' => EnumStore::STATUS_CANCEL
+                ]);
+                $info = [
+                    'name_customer' => $store->owner->name,
+                    'name_shop' => $store->name,
+                ];
+                $this->staffService->deleteStaff($store->owner->id);
+                $this->adminService->sendMailCancelAccount($store->owner->email, $info);
+                DB::commit();
+                return $this->sendResponse();
             }
-            $this->storeService->updateStore($storeId, ['status' => EnumStore::STATUS_CANCEL]);
-            DB::commit();
-            return $this->sendResponse();
+            return $this->sendResponse(null, JsonResponse::HTTP_NOT_ACCEPTABLE);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->sendError($e);

@@ -265,7 +265,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             "$tableSubOrder.code",
             "$tableSubOrder.status",
             "$tableSubOrder.order_id",
-            "$tableSubOrder.ordered_at",
+            "$tableOrder.ordered_at",
             "$tableStore.avatar",
             "$tableStore.id as store_id",
             "$tableStore.name as store_name",
@@ -274,6 +274,7 @@ class SubOrderRepository extends BaseRepository implements SubOrderRepositoryInt
             "$tableShipping.phone_number",
             "$tableShipping.address",
             "$tableSubOrder.total_payment",
+            "$tableSubOrder.sub_order_code as order_code",
             "$tableOrder.id as order_id",
             "$tableOrder.customer_id",
         ])

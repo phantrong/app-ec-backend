@@ -28,7 +28,7 @@ class SendMailConfirmReceivedOrder extends Mailable
      */
     public function build()
     {
-        return $this->subject('先日はご利用ありがとうございました')
+        return $this->subject('Thư gửi từ hệ thống MY CART')
             ->from(config('mail.from.address'), config('mail.from.name'))
             ->view('mail_template.confirm_received_order', [
                 'order' => $this->order
