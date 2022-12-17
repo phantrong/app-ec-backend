@@ -69,6 +69,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $storeId = $request['store_id'] ?? null;
         $tableProduct = Products::getTableName();
         $tableStore = Store::getTableName();
+        // $tableCategory = Category::getTableName();
         $tableProductFavorite = ProductFavorite::getTableName();
         return $this->model->select(
             "$tableProduct.id",
@@ -83,9 +84,15 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
                 EnumProduct::DAY_PRODUCT_NEW . " THEN 0 ELSE 1 END as status")
         )
             ->join($tableStore, "$tableStore.id", '=', "$tableProduct.store_id")
+            // ->join($tableCategory, "$tableProduct.category_id", '=', "$tableCategory.id")
             // ->where("$tableProduct.status", EnumProduct::STATUS_PUBLIC)
             ->when($keyWord, function ($query) use ($keyWord) {
-                return $query->search($keyWord);
+                return $query->where(function ($query) use ($keyWord) {
+                    $query->search($keyWord);
+                        // ->orwhere(function ($query) use ($keyWord) {
+                        //     $query->searchCategory($keyWord);
+                        // })
+                });
             })
             ->when($productId, function ($query) use ($productId, $tableProduct) {
                 return $query->whereIn("$tableProduct.id", $productId);

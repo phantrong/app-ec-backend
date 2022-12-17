@@ -16,7 +16,12 @@ class Products extends CoreModel
     protected $table = 'dtb_products';
 
     protected $searchable = [
-        'dtb_products.name'
+        'dtb_products.name',
+        'dtb_products.description',
+    ];
+
+    protected $searchCategory = [
+        'mtb_categories.name',
     ];
 
     protected $hidden = ['pivot'];

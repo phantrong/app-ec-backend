@@ -14,8 +14,8 @@ return new class extends Migration
      */
     public function up()
     {
-        DB::statement('ALTER TABLE dtb_products ADD FULLTEXT `search_fulltext_products` (`name`, `description`)');
-        DB::statement('ALTER TABLE dtb_products ENGINE = MyISAM');
+        DB::statement('ALTER TABLE mtb_categories ADD FULLTEXT `search_name_categories` (`name`)');
+        DB::statement('ALTER TABLE mtb_categories ENGINE = MyISAM');
     }
 
     /**
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        DB::statement('ALTER TABLE dtb_products DROP INDEX search_fulltext_products');
-        DB::statement('ALTER TABLE dtb_products ENGINE = InnoDB');
+        DB::statement('ALTER TABLE mtb_categories DROP INDEX search_name_categories');
+        DB::statement('ALTER TABLE mtb_categories ENGINE = InnoDB');
     }
 };
