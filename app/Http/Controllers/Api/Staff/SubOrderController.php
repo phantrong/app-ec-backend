@@ -121,28 +121,28 @@ class SubOrderController extends BaseController
             try {
                 $this->subOrderService->updateSubOrder($subOrder->id, $attributes);
                 $this->orderService->updateSuccessOrder($subOrder->order_id);
-                // $customer = Customer::find($subOrder->customer_id);
-                // $emailSendNotify = '';
+                $customer = Customer::find($subOrder->customer_id);
+                $emailSendNotify = '';
 
-                // if ($customer && $customer->send_mail) {
-                //     $emailSendNotify = $customer->email;
-                // }
+                if ($customer && $customer->send_mail) {
+                    $emailSendNotify = $customer->email;
+                }
 
-                // if (!$customer) {
-                //     $shipping = $subOrder->order->shipping;
-                //     $emailSendNotify = $shipping->email;
-                // }
+                if (!$customer) {
+                    $shipping = $subOrder->order->shipping;
+                    $emailSendNotify = $shipping->email;
+                }
 
-                // if ($emailSendNotify) {
-                //     if (isset($attributes['completed_at'])) {
-                //         JobSendMailReceiveOrder::dispatch($emailSendNotify, $subOrder->toArray());
-                //     } else {
-                //         JobSendMailOrderShipping::dispatch($emailSendNotify, $subOrder->toArray());
-                //     }
-                // }
+                if ($emailSendNotify) {
+                    if (isset($attributes['completed_at'])) {
+                        JobSendMailReceiveOrder::dispatch($emailSendNotify, $subOrder->toArray());
+                    } else {
+                        JobSendMailOrderShipping::dispatch($emailSendNotify, $subOrder->toArray());
+                    }
+                }
 
                 DB::commit();
-                return $this->sendResponse();
+                return $this->sendResponse(['message' => 'Chuyển trạng thái đơn hàng thành công']);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return $this->sendError($e);

@@ -169,9 +169,6 @@ class StaffRepository extends BaseRepository implements StaffRepositoryInterface
     public function deleteStaff(int $id)
     {
         return $this->model->where('id', $id)
-            ->where('store_id', Auth::user()->store_id)
-            ->where('is_owner', '<>', EnumStaff::IS_OWNER)
-            ->where('id', '<>', Auth::id())
             ->delete();
     }
 

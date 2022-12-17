@@ -98,19 +98,12 @@ class AdminService
 
     public function sendMailApproveAccount($email, $info)
     {
-        SendMailApproveAccount::dispatch($email, $info);
+        SendMailApproveAccount::dispatch($email, $info, 'mail_template.approve_account');
     }
 
-    public function sendMailCancelAccount($email, $customer, $isSignUpStore = false)
+    public function sendMailCancelAccount($email, $info)
     {
-        $linkSignUp = config('services.link_service_front') . 'my-page/upgrade-shop';
-        if ($isSignUpStore) {
-            $token = Str::random();
-            $emailHash = encrypt($email);
-            $this->storeMailVerificationRepository->createOrUpdate($email, $token);
-            $linkSignUp = config('services.link_service_front_shop') . "sign-up/$token/$emailHash";
-        }
-        SendMailApproveAccount::dispatch($email, $customer, 'mail_template.cancel_account', $linkSignUp);
+        SendMailApproveAccount::dispatch($email, $info, 'mail_template.cancel_account');
     }
 
     public function getAllAdmin()

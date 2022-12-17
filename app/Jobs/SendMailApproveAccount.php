@@ -16,16 +16,18 @@ class SendMailApproveAccount implements ShouldQueue
 
     private string $email;
     private array $info;
+    private string $mail_template;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($email, $info)
+    public function __construct($email, $info, $mail_template)
     {
         $this->email = $email;
         $this->info = $info;
+        $this->mail_template = $mail_template;
     }
 
     /**
@@ -36,7 +38,7 @@ class SendMailApproveAccount implements ShouldQueue
     public function handle()
     {
         Mail::to($this->email)->send(new SendMailConfirmAccount(
-            $this->info
+            $this->info, $this->mail_template
         ));
     }
 }
