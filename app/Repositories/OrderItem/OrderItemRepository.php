@@ -29,7 +29,6 @@ class OrderItemRepository extends BaseRepository implements OrderItemRepositoryI
             ->leftJoin("$tblOrder", "$tblOrder.id", '=', "$tblSubOrder.order_id")
             ->whereNull("$tblSubOrder.deleted_at")
             ->where("$tblSubOrder.order_id", $orderId)
-            ->where("$tblOrder.status", EnumOrder::STATUS_NEW)
             ->get();
     }
 
