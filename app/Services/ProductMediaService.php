@@ -29,8 +29,8 @@ class ProductMediaService
         return;
     }
 
-    public function deleteProductMedia($images)
+    public function deleteProductMedia($productId)
     {
-        return $this->productMedia->deleteProductMedia($images);
+        return $this->productMedia->deleteProductMedia($productId);
     }
 }

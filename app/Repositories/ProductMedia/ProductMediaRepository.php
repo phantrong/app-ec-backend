@@ -13,10 +13,10 @@ class ProductMediaRepository extends BaseRepository implements ProductMediaRepos
         return ProductMedia::class;
     }
 
-    public function deleteProductMedia(array $images)
+    public function deleteProductMedia($productId)
     {
         return $this->model
-            ->whereIn('media_path', $images)
+            ->where('product_id', $productId)
             ->delete();
     }
 }

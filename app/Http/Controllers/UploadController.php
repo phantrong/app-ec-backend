@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\UploadFileRequest;
 use App\Services\UploadService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UploadController extends BaseController
@@ -20,7 +21,7 @@ class UploadController extends BaseController
     {
         try {
             $links = $this->uploadService->uploadFileStorage($request->image);
-            return $this->sendResponse(asset($links));
+            return $this->sendResponse(asset($links), JsonResponse::HTTP_OK, [], 'Tải ảnh lên thành công');
         } catch (\Exception $e) {
             return $this->sendError($e);
         }

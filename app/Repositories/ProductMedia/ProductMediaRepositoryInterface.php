@@ -11,8 +11,8 @@ interface ProductMediaRepositoryInterface extends RepositoryInterface
     /**
      * delete product medias
      *
-     * @param array $arrayIds
+     * @param int $productId
      * @return mixed
      */
-    public function deleteProductMedia(array $arrayIds);
+    public function deleteProductMedia(int $productId);
 }

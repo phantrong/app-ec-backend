@@ -12,11 +12,12 @@ class BaseController extends Controller
     public function sendResponse(
         $result = null,
         $statusCode = JsonResponse::HTTP_OK,
-        $dataError = []
+        $dataError = [],
+        $message = ''
     ): JsonResponse {
         $response = [
             'success' => $statusCode === JsonResponse::HTTP_OK ? true : false,
-            'message' => $this->getMessage($statusCode)
+            'message' => $message ? $message : $this->getMessage($statusCode)
         ];
 
         if (isset($result['message'])) {
@@ -45,28 +46,28 @@ class BaseController extends Controller
 
         switch ($statusCode) {
             case JsonResponse::HTTP_UNAUTHORIZED:
-                $message = 'Unauthorized';
+                $message = 'Không có quyền cấp phép';
                 break;
             case JsonResponse::HTTP_FORBIDDEN:
-                $message = 'Permission denied';
+                $message = 'Bị từ chối quyền';
                 break;
             case JsonResponse::HTTP_BAD_REQUEST:
-                $message = 'Bad Request';
+                $message = 'Yêu cầu sai';
                 break;
             case JsonResponse::HTTP_UNPROCESSABLE_ENTITY:
-                $message = 'Validation errors';
+                $message = 'Dữ liệu lỗi xác thực';
                 break;
             case JsonResponse::HTTP_NOT_FOUND:
-                $message = 'Not found data';
+                $message = 'Không tìm thấy dữ liệu';
                 break;
             case JsonResponse::HTTP_NOT_ACCEPTABLE:
-                $message = 'not acceptable';
+                $message = 'Không được chấp nhận';
                 break;
             case JsonResponse::HTTP_INTERNAL_SERVER_ERROR:
-                $message = 'System error';
+                $message = 'Lỗi hệ thống';
                 break;
             default:
-                $message = 'Success';
+                $message = 'Thành công';
         }
         return $message;
     }

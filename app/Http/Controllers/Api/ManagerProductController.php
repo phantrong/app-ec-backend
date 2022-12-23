@@ -110,9 +110,7 @@ class ManagerProductController extends BaseController
                 $product = $this->productService->updateProduct($dataProduct, $productId);
             }
             //delete image
-            if ($request->image_delete) {
-                $this->productMedia->deleteProductMedia($request->image_delete);
-            }
+            $this->productMedia->deleteProductMedia($productId);
             //upload image new
             if ($request->product_medias) {
                 $images = [];
